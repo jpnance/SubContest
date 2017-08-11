@@ -22,7 +22,7 @@ class Games extends \lithium\data\Model {
 	}
 
 	public function hasStarted($entity) {
-		return ($entity->kickoff->toDateTime()->format('U') < time());
+		return ($entity->kickoffTime() < time());
 	}
 
 	public function isFinal($entity) {
@@ -31,6 +31,10 @@ class Games extends \lithium\data\Model {
 
 	public function isPickedBy($entity, $username) {
 		return (isset($entity->picks) && isset($entity->picks->$username));
+	}
+
+	public function kickoffTime($entity) {
+		return $entity->kickoff->toDateTime()->format('U');
 	}
 
 	public function pick($entity, $username, $team) {

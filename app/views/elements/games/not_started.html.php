@@ -1,6 +1,6 @@
 <div id="<?= $game->_id; ?>" class="game not-started <?= ($game->isPickedBy($username) ? 'picked ' . ($game->picks[$username] == $game->awayTeam->abbreviation ? 'away-team' : 'home-team') : 'not-picked'); ?>">
 	<div class="kickoff">
-		<?= date('l', $game->kickoff->sec); ?> at <?= date('g:ia', $game->kickoff->sec); ?> ET
+		<?= date('l', $game->kickoffTime()); ?> at <?= date('g:ia', $game->kickoffTime()); ?> ET
 	</div>
 	<div class="teams">
 		<?php if (isset($username)): ?>

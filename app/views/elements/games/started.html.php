@@ -1,6 +1,6 @@
 <div class="game started <?= $game->isPickedBy($username) ? 'picked' : ''; ?>">
 	<div class="status">
-		<?= date('l', $game->kickoff->sec); ?> at <?= date('g:ia', $game->kickoff->sec); ?> ET
+		<?= date('l', $game->kickoffTime()); ?> at <?= date('g:ia', $game->kickoffTime()); ?> ET
 	</div>
 	<div class="teams">
 		<div class="team <?= $this->team->className($game->awayTeam()); ?> <?= $game->isPickedBy($username) && $game->picks[$username] == $game->awayTeam->abbreviation ? 'pick' : ''; ?>"><?= $this->team->name($game->awayTeam()); ?></div>
