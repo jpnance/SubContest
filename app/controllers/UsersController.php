@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use lithium\security\Auth;
 use lithium\security\Password;
+use app\extensions\helper\Date;
 use app\models\Users;
 
 class UsersController extends \lithium\action\Controller {
@@ -35,6 +36,17 @@ class UsersController extends \lithium\action\Controller {
 
 			if ($editCheck && ($this->request->data['password1'] != '') && ($this->request->data['password1'] == $this->request->data['password2'])) {
 				$user->password = Password::hash($this->request->data['password1']);
+			}
+
+			if ($this->request->data['nickname'] != '') {
+				$user->nickname = $this->request->data['nickname'];
+			}
+
+			if ($this->request->data['eligible']) {
+				$user->makeEligibleFor(Date::getSeason());
+			}
+			else {
+				$user->removeEligibilityFor(Date::getSeason());
 			}
 
 			$user->save();

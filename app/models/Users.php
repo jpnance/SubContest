@@ -23,6 +23,32 @@ class Users extends \lithium\data\Model {
 		return false;
 	}
 
+	public function makeEligibleFor($entity, $trySeason) {
+		$seasons = $entity->seasons->to('array');
+
+		foreach ($seasons as $season) {
+			if ($season == $trySeason) {
+				return;
+			}
+		}
+
+		array_push($seasons, $trySeason);
+
+		$entity->seasons = $seasons;
+	}
+
+	public function removeEligibilityFor($entity, $trySeason) {
+		$seasons = $entity->seasons->to('array');
+
+		foreach ($seasons as $i => $season) {
+			if ($season == $trySeason) {
+				unset($seasons[$i]);
+				array_values($seasons[$i]);
+			}
+		}
+
+		$entity->seasons = $seasons;
+	}
 }
 
 ?>
