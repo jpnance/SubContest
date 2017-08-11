@@ -1,3 +1,4 @@
+#!/bin/sh
 #
 # li₃: the most RAD framework for PHP (http://li3.me)
 #
@@ -6,18 +7,5 @@
 # The full license text can be found in the LICENSE.txt file.
 #
 
-# OS X
-.DS_Store
-
-# Vim
-.*.sw[a-z]
-
-# PHPStorm
-.idea
-
-# Libraries 
-# libraries/*
-app/libraries/*
-
-# Temporary files, i.e. compiled templates.
-app/resources/tmp/*
+SELF=$0; test -L "$0" && SELF=$(readlink -n $0)
+php -f "$(dirname "$SELF")"/lithium.php -- "$@"
