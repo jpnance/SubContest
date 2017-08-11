@@ -63,7 +63,7 @@ class Games extends \lithium\data\Model {
 				 'week' => $week,
 				 ('picks.' . $username) => ['$exists' => true]
 			];
-			$count = Games::count(compact('conditions'));
+			$count = Games::find('count', compact('conditions'));
 
 			if ($count >= 5) {
 				throw new Exception('You\'ve already made five picks this week.');
@@ -71,10 +71,15 @@ class Games extends \lithium\data\Model {
 		}
 
 		if (!isset($entity->picks)) {
-			$entity->picks = [];
+			$picks = [];
+		}
+		else {
+			$picks = $entity->picks->to('array');
 		}
 
-		$entity->picks[$username] = $team;
+		$picks[$username] = $team;
+		$entity->picks = $picks;
+
 		return $entity->save();
 	}
 
