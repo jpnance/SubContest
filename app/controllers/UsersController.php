@@ -5,14 +5,13 @@ namespace app\controllers;
 use lithium\security\Auth;
 use lithium\security\Password;
 use app\extensions\helper\Date;
+use app\extensions\helper\User;
 use app\models\Users;
 
 class UsersController extends \lithium\action\Controller {
 
 	public function add() {
-		$sessionCheck = Auth::check('default');
-
-		if ($sessionCheck && $sessionCheck['username'] == 'jpnance') {
+		if (User::isAdmin()) {
 			$user = Users::create($this->request->data);
 
 			if ($this->request->data) {
@@ -32,7 +31,7 @@ class UsersController extends \lithium\action\Controller {
 			$conditions = ['_id' => $this->request->data['_id']];
 			$user = Users::first(compact('conditions'));
 
-			$editCheck = Password::check($this->request->data['password'], $user->password) || ($sessionCheck && $sessionCheck['username'] == 'jpnance');
+			$editCheck = Password::check($this->request->data['password'], $user->password) || User::isAdmin();
 
 			if ($editCheck && ($this->request->data['password1'] != '') && ($this->request->data['password1'] == $this->request->data['password2'])) {
 				$user->password = Password::hash($this->request->data['password1']);
@@ -65,11 +64,12 @@ class UsersController extends \lithium\action\Controller {
 	}
 
 	public function index() {
-		$sessionCheck = Auth::check('default');
-
-		if ($sessionCheck && $sessionCheck['username'] == 'jpnance') {
+		if (User::isAdmin()) {
 			$order = ['firstName' => 'ASC'];
 			$users = Users::all(compact('order'));
+		}
+		else {
+			$this->redirect('/');
 		}
 
 		return compact('users');

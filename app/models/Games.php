@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Exception;
+use app\extensions\helper\Date;
 use app\models\Teams;
 use app\models\Users;
 
@@ -38,7 +39,7 @@ class Games extends \lithium\data\Model {
 		if (!$user) {
 			throw new Exception('That user doesn\'t exist.');
 		}
-		else if (!$user->isEligibleFor(2016)) {
+		else if (!$user->isEligibleFor(Date::getSeason())) {
 			throw new Exception('You\'re not signed up for this season.');
 		}
 
@@ -54,7 +55,7 @@ class Games extends \lithium\data\Model {
 			$week = $entity->week;
 
 			$conditions = [
-				'season' => 2016,
+				'season' => Date::getSeason(),
 				 'week' => $week,
 				 ('picks.' . $username) => ['$exists' => true]
 			];
@@ -86,7 +87,7 @@ class Games extends \lithium\data\Model {
 		if (!$user) {
 			throw new Exception('That user doesn\'t exist.');
 		}
-		else if (!$user->isEligibleFor(2016)) {
+		else if (!$user->isEligibleFor(Date::getSeason())) {
 			throw new Exception('You\'re not signed up for this season.');
 		}
 

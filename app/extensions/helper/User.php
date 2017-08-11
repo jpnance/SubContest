@@ -6,7 +6,7 @@ use lithium\security\Auth;
 
 class User extends \lithium\template\Helper {
 
-	public function isAdmin() {
+	public static function isAdmin() {
 		$sessionCheck = Auth::check('default');
 		return $sessionCheck && $sessionCheck['username'] == 'jpnance';
 	}
