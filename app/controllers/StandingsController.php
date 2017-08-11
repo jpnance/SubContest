@@ -78,7 +78,7 @@ class StandingsController extends \lithium\action\Controller {
 			$standing['hiddenPicks'] = 5 - count($standing['currentPicks']);
 		}
 
-		uasort($standings, ['sortStandings']);
+		uasort($standings, ['self', 'sortStandings']);
 
 		return compact('users', 'standings', 'week');
 	}
