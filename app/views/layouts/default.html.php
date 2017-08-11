@@ -1,55 +1,41 @@
 <?php
 /**
- * li₃: the most RAD framework for PHP (http://li3.me)
+ * Lithium: the most rad php framework
  *
- * Copyright 2016, Union of RAD. All rights reserved. This source
- * code is distributed under the terms of the BSD 3-Clause License.
- * The full license text can be found in the LICENSE.txt file.
+ * @copyright     Copyright 2012, Union of RAD (http://union-of-rad.org)
+ * @license       http://opensource.org/licenses/bsd-license.php The BSD License
  */
 ?>
 <!doctype html>
 <html>
 <head>
 	<?php echo $this->html->charset();?>
-	<title>Application &gt; <?php echo $this->title(); ?></title>
-	<?php echo $this->html->style(['bootstrap.min', 'lithified']); ?>
-	<?php echo $this->scripts(); ?>
-	<?php echo $this->styles(); ?>
-	<?php echo $this->html->link('Icon', null, ['type' => 'icon']); ?>
+	<title><?php echo $this->title(); ?> &laquo; SubContest &laquo; Coinflipper</title>
+	<meta content="user-scalable=no, width=device-width" name="viewport"/>
+	<?php echo $this->html->style(array('reset', 'core', 'general', 'form', 'game', 'team', 'standings', 'users')); ?>
+	<?php echo $this->html->script(array('jquery', 'subcontest')); ?>
+	<?php echo $this->html->link('Icon', null, array('type' => 'icon')); ?>
 </head>
-<body class="lithified">
-	<div class="container-narrow">
+<body class="app">
+	<div id="container">
+		<div id="header">
+			<h1><?= $this->html->link('SubContest', '/'); ?></h1>
+			<ul id="navigation">
+				<li><?= $this->html->link('Games', '/', array('class' => ($this->_request->controller == 'weeks') ? 'selected' : '')); ?></li>
+				<li><?= $this->html->link('Standings', '/standings', array('class' => ($this->_request->controller == 'standings') ? 'selected' : '')); ?></li>
+				<li><?= $this->html->link('Lines', 'https://www.westgatedestinations.com/nevada/las-vegas/westgate-las-vegas-hotel-casino/casino/supercontest-weekly-card'); ?></li>
 
-		<div class="masthead">
-			<ul class="nav nav-pills pull-right">
-				<li>
-					<a href="http://li3.me/docs/book/manual/1.x/quickstart">Quickstart</a>
-				</li>
-				<li>
-					<a href="http://li3.me/docs/book/manual/1.x/">Manual</a>
-				</li>
-				<li>
-					<a href="http://li3.me/docs/api/lithium/1.1.x/lithium">API</a>
-				</li>
-				<li>
-					<a href="http://li3.me/">More</a>
-				</li>
+				<?php if ($this->user->isLoggedIn()): ?>
+					<li><?= $this->html->link('Settings', '/users/edit', array('class' => ($this->_request->controller == 'users') ? 'selected' : '')); ?></li>
+					<li><?= $this->html->link('Log Out', '/logout'); ?></li>
+				<?php else: ?>
+					<li><?= $this->html->link('Log In', '/login'); ?></li>
+				<?php endif; ?>
 			</ul>
-			<a href="http://li3.me/"><h3>&#10177;</h3></a>
 		</div>
-
-		<hr>
-
-		<div class="content">
+		<div id="content">
 			<?php echo $this->content(); ?>
 		</div>
-
-		<hr>
-
-		<div class="footer">
-			<p>&copy; Union Of RAD <?php echo date('Y') ?></p>
-		</div>
-
 	</div>
 </body>
 </html>

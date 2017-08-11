@@ -46,7 +46,13 @@ use lithium\core\Environment;
  *
  * @see app\controllers\PagesController
  */
-Router::connect('/', 'Pages::view');
+Router::connect('/', 'Weeks::view');
+
+/**
+ * Making the 'log in' and 'log out' functions nicer to look at in the address bar.
+ */
+Router::connect('/login', 'Sessions::add');
+Router::connect('/logout', 'Sessions::delete');
 
 /**
  * Connect the rest of `PagesController`'s URLs. This will route URLs like `/pages/about` to
@@ -102,6 +108,7 @@ if (!Environment::is('production')) {
  * In almost all cases, custom routes should be added above this one, since route-matching works in
  * a top-down fashion.
  */
+Router::connect('/{:controller}/{:action}/{:args}.{:type}');
 Router::connect('/{:controller}/{:action}/{:args}');
 
 ?>

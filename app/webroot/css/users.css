@@ -1,0 +1,8 @@
+ul#user-list {
+	list-style: disc inside none;
+}
+
+ul#user-list li {
+	font-size: 130%;
+	padding: 2px 0;
+}

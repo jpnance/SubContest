@@ -1,0 +1,191 @@
+div.game {
+	border: 1px solid #aaa;
+	border-radius: 6px;
+	display: inline-block;
+	height: 200px;
+	letter-spacing: 0px;
+	margin-top: 0.5em;
+	margin-right: 0.2em;
+	vertical-align: bottom;
+	width: 310px;
+}
+
+div.game div.teams {
+}
+
+div.game div.teams div.team.ari { background-image: url('../images/ari.png'); }
+div.game div.teams div.team.atl { background-image: url('../images/atl.png'); }
+div.game div.teams div.team.bal { background-image: url('../images/bal.png'); }
+div.game div.teams div.team.buf { background-image: url('../images/buf.png'); }
+div.game div.teams div.team.car { background-image: url('../images/car.png'); }
+div.game div.teams div.team.chi { background-image: url('../images/chi.png'); }
+div.game div.teams div.team.cin { background-image: url('../images/cin.png'); }
+div.game div.teams div.team.cle { background-image: url('../images/cle.png'); }
+div.game div.teams div.team.dal { background-image: url('../images/dal.png'); }
+div.game div.teams div.team.den { background-image: url('../images/den.png'); }
+div.game div.teams div.team.det { background-image: url('../images/det.png'); }
+div.game div.teams div.team.gb { background-image: url('../images/gb.png'); }
+div.game div.teams div.team.hou { background-image: url('../images/hou.png'); }
+div.game div.teams div.team.ind { background-image: url('../images/ind.png'); }
+div.game div.teams div.team.jax { background-image: url('../images/jax.png'); }
+div.game div.teams div.team.kc { background-image: url('../images/kc.png'); }
+div.game div.teams div.team.la { background-image: url('../images/la.png'); }
+div.game div.teams div.team.mia { background-image: url('../images/mia.png'); }
+div.game div.teams div.team.min { background-image: url('../images/min.png'); }
+div.game div.teams div.team.ne { background-image: url('../images/ne.png'); }
+div.game div.teams div.team.no { background-image: url('../images/no.png'); }
+div.game div.teams div.team.nyg { background-image: url('../images/nyg.png'); }
+div.game div.teams div.team.nyj { background-image: url('../images/nyj.png'); }
+div.game div.teams div.team.oak { background-image: url('../images/oak.png'); }
+div.game div.teams div.team.phi { background-image: url('../images/phi.png'); }
+div.game div.teams div.team.pit { background-image: url('../images/pit.png'); }
+div.game div.teams div.team.sd { background-image: url('../images/sd.png'); }
+div.game div.teams div.team.sea { background-image: url('../images/sea.png'); }
+div.game div.teams div.team.sf { background-image: url('../images/sf.png'); }
+div.game div.teams div.team.stl { background-image: url('../images/stl.png'); }
+div.game div.teams div.team.tb { background-image: url('../images/tb.png'); }
+div.game div.teams div.team.ten { background-image: url('../images/ten.png'); }
+div.game div.teams div.team.was { background-image: url('../images/was.png'); }
+
+div.game div.teams div.team,
+div.game div.scores div.score {
+	font-size: 160%;
+}
+
+div.game div.scores div.score {
+	padding: 0.1em 0.2em 0.1em 0;
+}
+
+div.game div.teams div.team {
+	background-position: 5px center;
+	background-repeat: no-repeat;
+	height: 26px;
+	padding: 0.1em 0 0.1em 1.7em;
+}
+
+div.game div.kickoff,
+div.game div.status,
+div.game div.final {
+	padding: 0.5em;
+	text-align: center;
+}
+
+div.game div.teams div.team.pick {
+	font-weight: bold;
+}
+
+div.game div.teams span.line {
+	color: #666;
+	font-size: 60%;
+	font-weight: normal;
+	vertical-align: middle;
+}
+
+div.game.not-started {
+	background-color: lightgray;
+}
+
+div.game.not-started div.teams {
+	margin-top: 36px;
+	margin-left: 32px;
+}
+
+div.game.started div.teams {
+	margin-left: 32px;
+}
+
+div.game.not-started.not-picked a.picked,
+div.game.not-started.picked.away-team div.home-team a.picked,
+div.game.not-started.picked.away-team div.away-team a.not-picked,
+div.game.not-started.picked.home-team div.away-team a.picked,
+div.game.not-started.picked.home-team div.home-team a.not-picked {
+	display: none;
+}
+
+div.game.not-started.picked.away-team div.away-team a.picked,
+div.game.not-started.picked.home-team div.home-team a.picked {
+	font-weight: bold;
+}
+
+div.game.picked {
+	background-color: #e1edf1;
+	border: 1px solid black;
+}
+
+div.game.picked.final div.teams {
+}
+
+div.game.final.lost {
+	background-color: #ffe4e4;
+	border-color: red;
+}
+
+div.game.final.pushed {
+	background-color: #f3f3f3;
+	border-color: #666;
+}
+
+div.game.final.won {
+	background-color: #dfffe5;
+	border-color: green;
+}
+
+/*
+div.game.final.lost div.teams {
+	background-color: #ffd0d0;
+}
+
+div.game.final.pushed div.teams {
+	background-color: #eaeaea;
+}
+
+div.game.final.won div.teams {
+	background-color: #c3ffce;
+}
+*/
+
+div.game.final div.scores {
+	float: right;
+	text-align: right;
+}
+
+div.game table.picks {
+	margin: 1em auto 0;
+	width: 100%;
+}
+
+div.game table.picks th,
+div.game table.picks td {
+	font-size: 80%;
+	padding-bottom: 0.2em;
+	padding-right: 0.2em;
+	word-spacing: 2px;
+}
+
+div.game table.picks th {
+	font-weight: bold;
+	padding-right: 0.5em;
+	text-align: right;
+	width: 3.1em;
+}
+
+div.game table.picks tr.home-picks th,
+div.game table.picks tr.home-picks td {
+	padding-top: 0.5em;
+}
+
+div.game table.picks th.winner {
+	color: #417A25;
+}
+
+div.game table.picks th.loser {
+	color: #ab0000;
+}
+
+div.game table.picks th.push {
+	color: #999;
+}
+
+div.game table.picks td span.name {
+	word-spacing: 0;
+}

@@ -1,0 +1,18 @@
+body {
+	font-family: helvetica;
+	margin: 8px;
+}
+
+h1 {
+	font-size: 2em;
+	font-weight: bold;
+}
+
+h2 {
+	font-size: 1em;
+	font-weight: bold;
+}
+
+a:visited {
+	color: blue;
+}
