@@ -15,6 +15,8 @@ db.teams.save({ "abbreviation": "IND", "location": "Indianapolis", "mascot": "Co
 db.teams.save({ "abbreviation": "JAX", "location": "Jacksonville", "mascot": "Jaguars" });
 db.teams.save({ "abbreviation": "KC", "location": "Kansas City", "mascot": "Chiefs" });
 db.teams.save({ "abbreviation": "LA", "location": "Los Angeles", "mascot": "Rams" });
+db.teams.save({ "abbreviation": "LAC", "location": "Los Angeles", "mascot": "Chargers" });
+db.teams.save({ "abbreviation": "LAR", "location": "Los Angeles", "mascot": "Rams" });
 db.teams.save({ "abbreviation": "MIA", "location": "Miami", "mascot": "Dolphins" });
 db.teams.save({ "abbreviation": "MIN", "location": "Minnesota", "mascot": "Vikings" });
 db.teams.save({ "abbreviation": "NE", "location": "New England", "mascot": "Patriots" });
