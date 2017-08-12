@@ -83,6 +83,11 @@ div.game div.teams span.line {
 	vertical-align: middle;
 }
 
+div.game div.teams input.edit-line {
+	font-size: 50%;
+	width: 15%;
+}
+
 div.game.not-started {
 	background-color: lightgray;
 }
@@ -190,4 +195,31 @@ div.game table.picks th.push {
 
 div.game table.picks td span.name {
 	word-spacing: 0;
+}
+
+div.game div.edit-game {
+	font-size: 80%;
+	padding: 3.5em 0.5em 0em 0.5em;
+	text-align: center;
+}
+
+div.game div.edit-game a.save {
+	font-size: 125%;
+	font-weight: bold;
+}
+
+div.game.edit div.teams span.line,
+div.game div.teams input.edit-line,
+div.game.edit div.edit-game a.edit,
+div.game div.edit-game a.cancel,
+div.game div.edit-game a.save {
+	display: none;
+}
+
+div.game div.teams span.line,
+div.game.edit div.teams input.edit-line,
+div.game div.edit-game a.edit,
+div.game.edit div.edit-game a.cancel,
+div.game.edit div.edit-game a.save {
+	display: inline;
 }

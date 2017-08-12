@@ -4,9 +4,40 @@ namespace app\controllers;
 
 use Exception;
 use lithium\security\Auth;
+use app\extensions\helper\User;
 use app\models\Games;
 
 class GamesController extends \lithium\action\Controller {
+
+	public function edit($gameId) {
+		$success = false;
+		$action = 'edit';
+
+		if (User::isAdmin()) {
+			if ($this->request->query) {
+				error_log(print_r($this->request->query, true));
+				$conditions = ['_id' => $gameId];
+				$game = Games::first(compact('conditions'));
+
+				if ($this->request->query['line'] == '--') {
+					unset($game->line);
+				}
+				else {
+					$game->line = floatval($this->request->query['line']);
+				}
+
+				try {
+					$success = $game->save();
+				}
+				catch (Exception $e) {
+					$success = false;
+					$error = $e->getMessage();
+				}
+			}
+		}
+
+		return compact('success', 'action', 'game', 'error');
+	}
 
 	public function pick($gameId, $team) {
 		$action = 'pick';
