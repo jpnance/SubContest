@@ -15,7 +15,6 @@ class GamesController extends \lithium\action\Controller {
 
 		if (User::isAdmin()) {
 			if ($this->request->query) {
-				error_log(print_r($this->request->query, true));
 				$conditions = ['_id' => $gameId];
 				$game = Games::first(compact('conditions'));
 
