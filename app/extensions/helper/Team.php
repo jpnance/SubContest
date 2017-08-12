@@ -9,7 +9,13 @@ class Team extends \lithium\template\Helper {
 	}
 
 	public function name($team) {
-		if ($team->abbreviation == 'NYG') {
+		if ($team->abbreviation == 'LAC') {
+			return 'LA Chargers';
+		}
+		else if ($team->abbreviation == 'LAR') {
+			return 'LA Rams';
+		}
+		else if ($team->abbreviation == 'NYG') {
 			return 'NY Giants';
 		}
 		else if ($team->abbreviation == 'NYJ') {

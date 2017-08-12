@@ -30,6 +30,8 @@ div.game div.teams div.team.ind { background-image: url('../images/ind.png'); }
 div.game div.teams div.team.jax { background-image: url('../images/jax.png'); }
 div.game div.teams div.team.kc { background-image: url('../images/kc.png'); }
 div.game div.teams div.team.la { background-image: url('../images/la.png'); }
+div.game div.teams div.team.lac { background-image: url('../images/lac.png'); }
+div.game div.teams div.team.lar { background-image: url('../images/lar.png'); }
 div.game div.teams div.team.mia { background-image: url('../images/mia.png'); }
 div.game div.teams div.team.min { background-image: url('../images/min.png'); }
 div.game div.teams div.team.ne { background-image: url('../images/ne.png'); }
