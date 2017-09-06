@@ -89,7 +89,7 @@ class Lines extends \lithium\console\Command {
 
 			if ($this->update == 'true') {
 				$conditions = array(
-					'season' => 2016,
+					'season' => Date::getSeason(),
 					'week' => $week,
 					'awayTeam.abbreviation' => $awayTeamAbbreviation,
 					'homeTeam.abbreviation' => $homeTeamAbbreviation,
