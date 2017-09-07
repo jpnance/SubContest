@@ -73,7 +73,7 @@ class StandingsController extends \lithium\action\Controller {
 
 		uasort($standings, ['self', 'sortStandings']);
 
-		return compact('users', 'standings', 'week');
+		return compact('users', 'standings', 'week', 'season');
 	}
 
 	private static function sortStandings($a, $b) {

@@ -1,4 +1,5 @@
 <?php $this->title('Standings'); ?>
+<?= $this->view()->render(array('element' => 'season_navigation'), compact('season')); ?>
 <table id="standings">
 	<tr>
 		<th>Player</th>

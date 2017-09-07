@@ -1,3 +1,31 @@
+div#season-navigation {
+	font-size: 70%;
+	margin-bottom: 1em;
+}
+
+div#season-navigation a.season,
+div#season-navigation span.season {
+	vertical-align: middle;
+}
+
+div#season-navigation a.season {
+	margin: 0 0.5em;
+}
+
+div#season-navigation a.season-1 {
+	margin-left: 0;
+}
+
+div#season-navigation a.season-17 {
+	margin-right: 0;
+}
+
+div#season-navigation span.current.season {
+	font-size: 200%;
+	font-style: italic;
+	font-weight: bold;
+}
+
 table#standings th {
 	font-weight: bold;
 }
