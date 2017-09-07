@@ -8,15 +8,20 @@ use app\models\Users;
 
 class StandingsController extends \lithium\action\Controller {
 
-	public function index() {
+	public function index($season = null) {
+		if (!isset($season)) {
+			$season = Date::getSeason();
+		}
+
+		$season = intval($season);
 		$week = Date::getWeek();
 
-		$userConditions = ['seasons' => Date::getSeason()];
+		$userConditions = ['seasons' => $season];
 		$userFields = ['username', 'nickname'];
 		$users = Users::all(['conditions' => $userConditions, 'fields' => $userFields]);
 
 		$gameConditions = [
-			'season' => Date::getSeason(),
+			'season' => $season,
 			'picks' => ['$exists' => true],
 			'$or' => [
 				['winner' => ['$exists' => true]],

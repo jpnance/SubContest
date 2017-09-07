@@ -54,6 +54,8 @@ Router::connect('/', 'Weeks::view');
 Router::connect('/login', 'Sessions::add');
 Router::connect('/logout', 'Sessions::delete');
 
+Router::connect('/standings/{:args}', 'Standings::index');
+
 /**
  * Connect the rest of `PagesController`'s URLs. This will route URLs like `/pages/about` to
  * `PagesController`, rendering `/views/pages/about.html.php` as a static page.
