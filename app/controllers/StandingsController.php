@@ -9,11 +9,12 @@ use app\models\Users;
 class StandingsController extends \lithium\action\Controller {
 
 	public function index($season = null) {
-		if (!isset($season)) {
+		if (!isset($season) || !is_numeric($season) || $season < 2012 || $season > Date::getSeason()) {
 			$season = Date::getSeason();
 		}
 
 		$season = intval($season);
+
 		$week = Date::getWeek();
 
 		$userConditions = ['seasons' => $season];
