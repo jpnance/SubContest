@@ -15,6 +15,11 @@ class UsersController extends \lithium\action\Controller {
 			$user = Users::create($this->request->data);
 
 			if ($this->request->data) {
+				$user->password = Password::hash($this->request->data['password']);
+				$user->seasons = [];
+
+				$user->makeEligibleFor(Date::getSeason());
+
 				if ($user->save()) {
 					$this->redirect('Users::add');
 				}
