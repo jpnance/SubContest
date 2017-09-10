@@ -46,11 +46,13 @@ class UsersController extends \lithium\action\Controller {
 				$user->nickname = $this->request->data['nickname'];
 			}
 
-			if ($this->request->data['eligible']) {
-				$user->makeEligibleFor(Date::getSeason());
-			}
-			else {
-				$user->removeEligibilityFor(Date::getSeason());
+			if (User::isAdmin()) {
+				if ($this->request->data['eligible']) {
+					$user->makeEligibleFor(Date::getSeason());
+				}
+				else {
+					$user->removeEligibilityFor(Date::getSeason());
+				}
 			}
 
 			$user->save();
