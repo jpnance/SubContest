@@ -31,7 +31,7 @@ class StandingsController extends \lithium\action\Controller {
 			]
 		];
 		$gameOrder = ['kickoff' => 'ASC', 'awayTeam.abbreviation' => 'ASC'];
-		$gameFields = ['awayTeam', 'homeTeam', 'kickoff', 'line', 'picks', 'push', 'winner'];
+		$gameFields = ['awayTeam', 'homeTeam', 'kickoff', 'line', 'picks', 'push', 'week', 'winner'];
 		$games = Games::all(['conditions' => $gameConditions, 'order' => $gameOrder, 'fields' => $gameFields]);
 
 		$standings = [];
