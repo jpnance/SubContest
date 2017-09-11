@@ -57,6 +57,9 @@ class Scoring extends \lithium\console\Command {
 
 			$awayTeam = ($awayTeam == 'JAC') ? 'JAX' : $awayTeam;
 			$homeTeam = ($homeTeam == 'JAC') ? 'JAX' : $homeTeam;
+			$awayTeam = ($awayTeam == 'LA') ? 'LAR' : $awayTeam;
+			$homeTeam = ($homeTeam == 'LA') ? 'LAR' : $homeTeam;
+
 
 			if ($this->update == 'true') {
 				$conditions = array(
