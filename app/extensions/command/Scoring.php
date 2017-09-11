@@ -2,6 +2,7 @@
 
 namespace app\extensions\command;
 
+use app\extensions\helper\Team;
 use app\models\Games;
 
 class Scoring extends \lithium\console\Command {
@@ -55,10 +56,8 @@ class Scoring extends \lithium\console\Command {
 			$homeTeam = $gameMatches[1][$i];
 			$homeScore = doubleval($gameMatches[2][$i]);
 
-			$awayTeam = ($awayTeam == 'JAC') ? 'JAX' : $awayTeam;
-			$homeTeam = ($homeTeam == 'JAC') ? 'JAX' : $homeTeam;
-			$awayTeam = ($awayTeam == 'LA') ? 'LAR' : $awayTeam;
-			$homeTeam = ($homeTeam == 'LA') ? 'LAR' : $homeTeam;
+			$awayTeam = Team::normalizeAbbreviation($awayTeam);
+			$homeTeam = Team::normalizeAbbreviation($homeTeam);
 
 
 			if ($this->update == 'true') {

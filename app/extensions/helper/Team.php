@@ -26,6 +26,17 @@ class Team extends \lithium\template\Helper {
 		}
 	}
 
+	public static function normalizeAbbreviation($abbreviation) {
+		if ($abbreviation == 'JAC') {
+			return 'JAX';
+		}
+		else if ($abbreviation == 'LA') {
+			return 'LAR';
+		}
+		else {
+			return $abbreviation;
+		}
+	}
 }
 
 ?>
