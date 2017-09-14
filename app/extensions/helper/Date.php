@@ -15,7 +15,7 @@ class Date extends \lithium\template\Helper {
 			$now = strtotime($timestamp);
 		}
 
-		$start = time(0, 0, 0, 9, 6, 2017);
+		$start = mktime(0, 0, 0, 9, 7, 2017);
 
 		$days = intval(($now - $start) / 86400);
 
