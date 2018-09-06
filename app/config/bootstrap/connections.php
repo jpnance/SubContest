@@ -43,7 +43,7 @@ use lithium\data\Connections;
  */
 Connections::add('default', array(
 	'type' => 'MongoDb',
-	'host' => 'localhost',
+	'host' => '127.0.0.1',
 	'database' => 'subcontest'
 ));
 
