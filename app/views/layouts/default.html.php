@@ -23,7 +23,7 @@
 			<ul id="navigation">
 				<li><?= $this->html->link('Games', '/', array('class' => ($this->_request->controller == 'weeks') ? 'selected' : '')); ?></li>
 				<li><?= $this->html->link('Standings', '/standings', array('class' => ($this->_request->controller == 'standings') ? 'selected' : '')); ?></li>
-				<li><?= $this->html->link('Lines', 'https://www.westgatedestinations.com/nevada/las-vegas/westgate-las-vegas-hotel-casino/casino/supercontest-weekly-card'); ?></li>
+				<li><?= $this->html->link('Lines', 'https://www.westgateresorts.com/hotels/nevada/las-vegas/westgate-las-vegas-resort-casino/supercontest-weekly-card/'); ?></li>
 
 				<?php if ($this->user->isLoggedIn()): ?>
 					<li><?= $this->html->link('Settings', '/users/edit', array('class' => ($this->_request->controller == 'users') ? 'selected' : '')); ?></li>
