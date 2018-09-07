@@ -2,6 +2,7 @@
 
 namespace app\extensions\command;
 
+use app\extensions\helper\Date;
 use app\extensions\helper\Team;
 use app\models\Games;
 
@@ -40,25 +41,22 @@ class Scoring extends \lithium\console\Command {
 	}
 
 	public function loadNflScores() {
-		$scores = file_get_contents('http://www.nfl.com/liveupdate/scorestrip/ss.xml');
+		$season = Date::getSeason();
+		$scores = json_decode(file_get_contents('http://www.nfl.com/liveupdate/scores/scores.json'));
+		$dates = array_keys((array) $scores);
 
-		$weekSeasonPattern = '/<gms .*?w="(\d\d?)".*?y="(\d\d\d\d)".*?>/';
-		preg_match($weekSeasonPattern, $scores, $weekSeasonMatches);
-		$week = intval($weekSeasonMatches[1]);
-		$season = intval($weekSeasonMatches[2]);
+		foreach ($dates as $date) {
+			$feedGame = $scores->{$date};
+			$week = Date::getWeek(strtotime(substr($date, 0, 8)));
 
-		$gamePattern = '/<g .*?q="FO?".*?h="(.*?)".*?hs="(\d\d?)".*?v="(.*?)".*?vs="(\d\d?)".*?\/>/';
-		preg_match_all($gamePattern, $scores, $gameMatches);
+			if ($feedGame->qtr != 'Final') {
+				continue;
+			}
 
-		foreach ($gameMatches[0] as $i => $gameMatch) {
-			$awayTeam = $gameMatches[3][$i];
-			$awayScore = doubleval($gameMatches[4][$i]);
-			$homeTeam = $gameMatches[1][$i];
-			$homeScore = doubleval($gameMatches[2][$i]);
-
-			$awayTeam = Team::normalizeAbbreviation($awayTeam);
-			$homeTeam = Team::normalizeAbbreviation($homeTeam);
-
+			$awayTeam = Team::normalizeAbbreviation($feedGame->away->abbr);
+			$awayScore = $feedGame->away->score->T;
+			$homeTeam = Team::normalizeAbbreviation($feedGame->home->abbr);
+			$homeScore = $feedGame->home->score->T;
 
 			if ($this->update == 'true') {
 				$conditions = array(
@@ -82,11 +80,9 @@ class Scoring extends \lithium\console\Command {
 				}
 			}
 			else {
-				$this->out($awayTeam . ' ' . $awayScore . ', ' . $homeTeam . ' ' . $homeScore);
+				$this->out($season . ' ' . $week . ' ' . $awayTeam . ' ' . $awayScore . ', ' . $homeTeam . ' ' . $homeScore);
 			}
 		}
-
-		return;
 	}
 
 	public function run() {

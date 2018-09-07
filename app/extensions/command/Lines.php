@@ -46,7 +46,7 @@ class Lines extends \lithium\console\Command {
 	);
 
 	public function run() {
-		$weeklyCard = file_get_contents('https://www.westgatedestinations.com/nevada/las-vegas/westgate-las-vegas-hotel-casino/casino/supercontest-weekly-card');
+		$weeklyCard = file_get_contents('https://www.westgateresorts.com/hotels/nevada/las-vegas/westgate-las-vegas-resort-casino/supercontest-weekly-card/');
 		$weeklyCard = str_replace('&nbsp;', ' ', $weeklyCard);
 
 		$weekPattern = '/<td>(.*?)<\/td><td><\/td><td><\/td><td><\/td>/i';
