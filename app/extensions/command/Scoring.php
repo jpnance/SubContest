@@ -47,7 +47,7 @@ class Scoring extends \lithium\console\Command {
 
 		foreach ($dates as $date) {
 			$feedGame = $scores->{$date};
-			$week = Date::getWeek(strtotime(substr($date, 0, 8)));
+			$week = Date::getWeek(substr($date, 0, 8));
 
 			if ($feedGame->qtr != 'Final') {
 				continue;
