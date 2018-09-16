@@ -49,7 +49,7 @@ class Scoring extends \lithium\console\Command {
 			$feedGame = $scores->{$date};
 			$week = Date::getWeek(substr($date, 0, 8));
 
-			if ($feedGame->qtr != 'Final') {
+			if ($feedGame->qtr != 'Final' && $feedGame->qtr != 'final overtime') {
 				continue;
 			}
 
