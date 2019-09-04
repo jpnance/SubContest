@@ -5,7 +5,7 @@ namespace app\extensions\helper;
 class Date extends \lithium\template\Helper {
 
 	public static function getSeason() {
-		return 2018;
+		return 2019;
 	}
 
 	public static function getWeek($timestamp = null) {
@@ -15,7 +15,7 @@ class Date extends \lithium\template\Helper {
 			$now = strtotime($timestamp);
 		}
 
-		$start = mktime(0, 0, 0, 9, 6, 2018);
+		$start = mktime(0, 0, 0, 9, 5, 2019);
 
 		$days = intval(($now - $start) / 86400);
 
