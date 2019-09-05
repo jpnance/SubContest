@@ -717,18 +717,7 @@ class MongoDb extends \lithium\data\Source {
 
 		switch ($type) {
 			case 'count':
-				$args = $query->export($this);
-				$pipeline = [];
-				if ($args['conditions']) {
-					$pipeline[] = ['$match' => $args['conditions']];
-				}
-				$pipeline[] = ['$group' => ['_id' => null, 'count' => ['$sum' => 1 ]]];
-				$cursor = $this->server->executeCommand($this->_config['database'], new Command([
-					'aggregate' => $args['source'],
-					'pipeline'  => $pipeline
-				]));
-				$result = current($cursor->toArray())->result;
-				return $result ? current($result)->count : 0;
+				return $this->read($query, $options)->count();
 		}
 	}
 
