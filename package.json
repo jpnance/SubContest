@@ -1,6 +1,6 @@
 {
-  "name": "summerclassics",
-  "version": "1.0.0",
+  "name": "subcontest",
+  "version": "2.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jpnance/SummerClassics.git"
+    "url": "git+https://github.com/jpnance/SubContest.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/jpnance/SummerClassics/issues"
+    "url": "https://github.com/jpnance/SubContest/issues"
   },
-  "homepage": "https://github.com/jpnance/SummerClassics#readme",
+  "homepage": "https://github.com/jpnance/SubContest#readme",
   "dependencies": {
     "body-parser": "^1.18.2",
     "bootstrap": "^4.3.1",
