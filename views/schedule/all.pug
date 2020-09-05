@@ -1,0 +1,15 @@
+extends ../layout.pug
+
+block title
+	+title(dateFormat(today, 'mmmm dS'), 'Schedule')
+
+block content
+	div.row
+		div.col-12.pb-3
+			+scheduleNav(yesterday, today, tomorrow)
+
+		if games.length == 0
+			h5.col-8.offset-2.text-center There are no games scheduled for #{dateFormat(today, 'mmmm dS')}.
+		else
+			each game in games
+				+gameCard(game)

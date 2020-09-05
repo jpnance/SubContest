@@ -1,0 +1,90 @@
+include mixins.pug
+
+doctype html
+html(lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml')
+	head
+		script(async=true src='https://www.googletagmanager.com/gtag/js?id=UA-140416834-1')
+		script
+			| window.dataLayer = window.dataLayer || [];
+			| function gtag(){dataLayer.push(arguments);}
+			| gtag('js', new Date());
+			| gtag('config', 'UA-140416834-1');
+
+		meta(charset='utf-8')
+		meta(name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no')
+		meta(name='google' content='notranslate')
+
+		block title
+
+		block styles
+			link(href='/css/bootstrap.min.css' rel='stylesheet')
+			link(href='/css/classics.css' rel='stylesheet')
+
+		block scripts
+			script(src='/js/jquery.min.js' type='text/javascript')
+			script(src='/js/bootstrap.min.js' type='text/javascript')
+			script(src='/js/classics.js' type='text/javascript')
+
+		link(href='/images/favicon.ico' rel='icon')
+
+	body
+		-
+			var navItems = [];
+
+			navItems.push({ name: 'Schedule', href: '/schedule' });
+			navItems.push({ name: 'Standings', href: '/standings', });
+
+			if (session) {
+				navItems.push({ name: 'Picks', href: '/picks' });
+				navItems.push({ name: 'Notifications', href: '#' });
+				navItems.push({ name: 'Settings', href: '/users/edit/' + session.username });
+				navItems.push({ name: 'Log Out', href: process.env.LOGIN_SERVICE + '/sessions/delete' });
+			}
+			else {
+				navItems.push({ name: 'Log In', href: '/login' });
+			}
+
+		nav.navbar.navbar-expand-md.navbar-light.bg-light.mb-3
+			a.navbar-brand(href='/')
+				img.mr-2(src='/images/logo.png' height='30')
+				strong.align-middle Summer Classics
+			button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarNav')
+				if session && session.user.notifications.length > 0
+					span.badge.badge-pill.badge-primary.align-middle.mr-2(style={ 'font-size': '50%' }) #{session.user.notifications.length}
+				span.navbar-toggler-icon
+			div.collapse.navbar-collapse#navbarNav
+				ul.navbar-nav
+					each navItem in navItems
+						if navItem.name == 'Notifications'
+							li.nav-item.dropdown.py-1
+								a.nav-link.dropdown-toggle(href='#' class=(session.user.notifications.length == 0 ? 'disabled' : '') data-toggle='dropdown')
+									| Notifications
+									if session.user.notifications.length > 0
+										span.badge.badge-pill.badge-primary.align-middle.ml-1(style={ 'font-size': '60%' }) #{session.user.notifications.length}
+								div.notifications.dropdown-menu.py-0
+									ul.list-group.list-group-flush
+										each notification in session.user.notifications
+											+notificationListGroupItem(notification)
+						else if navItem.name == 'Log Out'
+							li.nav-item.dropdown.py-1
+								a.nav-link.dropdown-toggle(href='#' data-toggle='dropdown')
+									| Log Out
+
+								div.log-out.dropdown-menu.py-0
+									a.this-device.dropdown-item(href=process.env.LOGIN_SERVICE + '/sessions/delete') This Device
+									a.all-devices.dropdown-item(href=process.env.LOGIN_SERVICE + '/sessions/deleteAll') All Devices
+						else
+							li.nav-item.py-1
+								a.nav-link(href=navItem.href) #{navItem.name}
+
+		//-
+			if session && session.user.admin
+				div.container.pb-3
+					div.d-block.d-sm-none xs
+					div.d-none.d-sm-block.d-md-none sm
+					div.d-none.d-md-block.d-lg-none md
+					div.d-none.d-lg-block.d-xl-none lg
+					div.d-none.d-xl-block xl
+
+		div.container.pb-3
+			block content

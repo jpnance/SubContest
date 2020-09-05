@@ -1,0 +1,20 @@
+{
+        "awayTeam" : {
+		"abbreviation" : "NO",
+		"score" : 34
+	},
+        "homeTeam" : {
+		"abbreviation": "GB",
+		"score" : 42
+	},
+        "kickoff" : ISODate("2011-09-09T00:30:00Z"),
+        "line" : -3.5,
+        "season" : 2011,
+        "week" : 1
+	"picks" : {
+		"jpnance" : "NO",
+		"jsneden" : "GB",
+		"dschexnayder" : "NO"
+	}
+}
+

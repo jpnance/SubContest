@@ -1,0 +1,81 @@
+a.team-button, button.btn {
+	line-height: 0.9rem;
+}
+
+.game-status {
+	font-size: 80%;
+}
+
+.record {
+	font-size: 80%;
+}
+
+.pitcher {
+	font-size: 70%;
+}
+
+.score {
+	font-size: 80%;
+}
+
+.picks {
+	font-size: 80%;
+	line-height: 1.1;
+}
+
+th.team, td.classic-game {
+	line-height: 0.9rem;
+}
+
+th.team span.record {
+	font-weight: normal;
+}
+
+td.classic-game span.result {
+	font-size: 80%;
+}
+
+div.team.picked a.team-button.pick,
+div.team.unpicked a.team-button.unpick {
+	display: none;
+}
+
+.bg-light-gray {
+	background-color: #e6e6e6 !important;
+}
+
+li.notification {
+	font-size: 80%;
+}
+
+@media (min-width: 0px) {
+	/* xs */
+	td.classic-game {
+		font-size: 80%;
+		line-height: 0.8rem;
+	}
+}
+
+@media (min-width: 576px) {
+	/* sm */
+}
+
+@media (min-width: 768px) {
+	/* md */
+	div.notifications.dropdown-menu {
+		width: 300px;
+	}
+
+	td.classic-game {
+		font-size: 100%;
+		line-height: 0.8rem;
+	}
+}
+
+@media (min-width: 992px) {
+	/* lg */
+}
+
+@media (min-width: 1200px) {
+	/* xl */
+}

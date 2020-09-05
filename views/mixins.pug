@@ -1,0 +1,309 @@
+mixin title(...breadcrumbs)
+	title
+		each breadcrumb in breadcrumbs
+			| #{breadcrumb} &laquo;
+			|
+		| Summer Classics &laquo; Coinflipper
+
+mixin teamButton(session, game, side)
+	-
+		var button = { classes: [], actionLink: null };
+
+		if (!side.team.classic || side.team.classic.isFinal() || game.hasDefinitelyStarted()) {
+			button.classes.push('disabled');
+			button.actionLink = '#';
+		}
+
+		if (side.picked) {
+			button.actionLink = '/unpick/' + side.team._id + '/' + game._id;
+			button.classes.push('btn-secondary');
+		}
+		else {
+			button.actionLink = '/pick/' + side.team._id + '/' + game._id;
+			button.classes.push('btn-outline-secondary');
+		}
+
+	a.team-button.text-center.btn(href=button.actionLink class=button.classes data-team-id=side.team._id)
+		| #{side.team.abbreviation}
+		if session
+			br
+			span.record
+				+record(side.team.classic)
+
+mixin pitcher(pitcher, gameDate)
+	if pitcher
+		if gameDate && ['2019-08-23', '2019-08-24', '2019-08-25'].includes(gameDate) && pitcher.nickname
+			| #{pitcher.nickname}
+		else if gameDate && gameDate == '2019-04-15'
+			| Jackie Robinson
+		else
+			| #{pitcher.name}
+	else
+		| TBD
+
+mixin record(classic)
+	if classic
+		| (#{classic.record.wins}-#{classic.record.losses})
+	else
+		| (0-0)
+
+mixin gameCard(game, showDate)
+	-
+		var classes = {
+			card: { border: [] },
+			header: { background: [], linkText: [] },
+			away: { background: [], linkText: [], pitcherText: ['text-muted'], scoreText: [], picksText: [] },
+			home: { background: [], linkText: [], pitcherText: ['text-muted'], scoreText: [], picksText: [] }
+		}
+
+		if (game.classic) {
+			classes.card.border.push('border-secondary');
+
+			if (game.classic.team._id == game.away.team._id) {
+				classes.away.background.push('bg-light-gray');
+			}
+			else if (game.classic.team._id == game.home.team._id) {
+				classes.home.background.push('bg-light-gray');
+			}
+		}
+
+		if (game.isDelayed() || game.hasBeenSuspended() || game.hasBeenCanceled()) {
+			classes.header.background.push('bg-warning');
+			classes.header.linkText.push('text-dark');
+		}
+
+		if (game.hasBeenPostponed()) {
+			classes.header.background.push('bg-secondary');
+			classes.header.linkText.push('text-white');
+		}
+
+		if (game.hasDefinitelyStarted() && !game.isFinal()) {
+			classes.header.background.push('bg-primary');
+			classes.header.linkText.push('text-white');
+			classes.away.picksText.push('text-dark');
+			classes.home.picksText.push('text-dark');
+		}
+
+		if (game.isFinal()) {
+			if (game.classic) {
+				classes.header.linkText.push('text-white');
+
+				if (game.classic.team._id == game.away.team._id) {
+					if (game.away.winner) {
+						classes.header.background.push('bg-success');
+					}
+					else if (game.home.winner) {
+						classes.header.background.push('bg-danger');
+					}
+				}
+				else if (game.classic.team._id == game.home.team._id) {
+					if (game.home.winner) {
+						classes.header.background.push('bg-success');
+					}
+					if (game.away.winner) {
+						classes.header.background.push('bg-danger');
+					}
+				}
+			}
+
+			if (game.away.winner) {
+				classes.away.picksText.push('text-success');
+				classes.home.picksText.push('text-danger');
+			}
+			else if (game.home.winner) {
+				classes.home.picksText.push('text-success');
+				classes.away.picksText.push('text-danger');
+			}
+		}
+
+	div.col-xs-12.col-sm-6.col-md-6.col-lg-4.mb-4(id='game-' + game._id)
+		if showDate
+			h6.text-muted.text-center #{dateFormat(game.startTime, 'mmmm dS')}
+		div.card(class=classes.card.border)
+			div.card-header.py-1(class=classes.header.background)
+				div.row.justify-content-center
+					div.col-10.col-sm-12.col-md-12.text-center
+						a(href='https://www.mlb.com/gameday/' + game._id class=classes.header.linkText target='_blank')
+							if game.gameNumber
+								|
+								| G#{game.gameNumber}:
+								|
+
+							if game.isDelayed()
+								| Delayed
+							else if game.hasBeenPostponed()
+								| Postponed
+							else if game.hasBeenCanceled()
+								| Canceled
+							else if !game.hasPotentiallyStarted()
+								if game.hasStartTime()
+									| #{dateFormat(game.startTime, 'h:MMtt')} ET
+								else
+									| TBD
+							else if game.isFinal()
+								| Final
+								if game.inning.number != 9
+									|
+									| (#{game.inning.number})
+							else if game.isOver()
+								| End of the #{game.inning.ordinal}
+							else if game.hasBeenSuspended()
+								| Suspended
+							else if game.hasDefinitelyStarted()
+								| #{game.inning.state} of the #{game.inning.ordinal}
+							else if game.isWarmingUp()
+								| Warmup
+							else if !game.hasStartTime()
+								| TBD
+							else
+								| Starting Soon
+
+			ul.list-group.list-group-flush
+				+teamRow(game, 'away', classes.away)
+				+teamRow(game, 'home', classes.home)
+
+			if session && !game.hasDefinitelyStarted() && !game.hasBeenPostponed() && !game.hasBeenCanceled()
+				div.card-footer.text-center
+					div.btn-group
+						+teamButton(session, game, game.away)
+						+teamButton(session, game, game.home)
+
+mixin teamRow(game, side, classes)
+	li.team-row.list-group-item.py-1(id='team-row-' + game[side].team._id class=classes.background)
+		div.row
+			div.col-6.offset-2.col-sm-8.offset-sm-1.col-md-8.p-0
+					h5.mb-0.text-nowrap
+						a.font-weight-bold(href='/schedule/' + game[side].team.abbreviation + '#game-' + game._id class=classes.linkText) #{game[side].team.teamName}
+					div.pitcher.mb-0.text-nowrap
+						if game[side].probablePitcher
+							a(href='http://m.mlb.com/player/' + game[side].probablePitcher._id class=classes.pitcherText target='_blank')
+								+pitcher(game[side].probablePitcher, game.date)
+						else
+							span(class=classes.pitcherText)
+								+pitcher(game[side].probablePitcher)
+			h2.col-2.text-center.text-nowrap.font-weight-normal.p-0.mb-0(class=classes.scoreText)
+				if game.hasDefinitelyStarted()
+					| #{game[side].score}
+		div.row
+			if game.hasDefinitelyStarted() && game[side].picks && game[side].picks.length > 0
+				div.picks.col-6.offset-2.col-sm-8.offset-sm-1.p-0.mb-1.mt-2(class=classes.picksText)
+					each pick in game[side].picks
+						span.d-inline-block
+							a(href='/picks/' + pick.user.username class=classes.picksText)
+								| #{pick.user.displayName}
+							|
+							|
+							span.record
+								+record(pick)
+							if pick != game[side].picks[game[side].picks.length - 1]
+								| ,
+						|
+						|
+
+mixin scheduleNav(yesterday, today, tomorrow)
+	ul.nav.justify-content-center
+		if dateFormat(yesterday, 'yyyy-mm-dd') >= '2019-03-20'
+			li.nav-item
+				a.nav-link(href='/schedule/' + dateFormat(yesterday, 'yyyy-mm-dd'))
+					span.d-none.d-sm-inline &laquo; #{dateFormat(yesterday, 'mmmm dS')}
+					span.d-sm-none &laquo; #{dateFormat(yesterday, 'mmm d')}
+		li.nav-item
+			a.nav-link.disabled(href='/schedule/' + dateFormat(today, 'yyyy-mm-dd'))
+				span.d-none.d-sm-inline #{dateFormat(today, 'mmmm dS')}
+				span.d-sm-none #{dateFormat(today, 'mmm d')}
+		if dateFormat(tomorrow, 'yyyy-mm-dd') <= '2019-09-29'
+			li.nav-item
+				a.nav-link(href='/schedule/' + dateFormat(tomorrow, 'yyyy-mm-dd'))
+					span.d-none.d-sm-inline #{dateFormat(tomorrow, 'mmmm dS')} &raquo;
+					span.d-sm-none #{dateFormat(tomorrow, 'mmm d')} &raquo;
+
+mixin scoreRelativeToTeam(game, team)
+	if game.away.team._id == team._id
+		| #{game.away.score}-#{game.home.score}
+	else if game.home.team._id == team._id
+		| #{game.home.score}-#{game.away.score}
+
+mixin notificationListGroupItem(notification)
+	-
+		var listGroupItemClass = '';
+
+		switch(notification.type) {
+			case 'classic-win': listGroupItemClass = 'list-group-item-success'; break;
+			case 'classic-loss': listGroupItemClass = 'list-group-item-danger'; break;
+			case 'postponement': listGroupItemClass = 'list-group-item-info'; break;
+			case 'unnecessary': listGroupItemClass = 'list-group-item-info'; break;
+		}
+
+	li.notification.list-group-item(class=listGroupItemClass)
+		div.row
+			div.col-11
+				if notification.type == 'classic-win'
+					strong Congratulations!
+					|
+					|
+					span
+						| You won your
+						|
+						strong #{notification.classic.team.teamName}
+						|
+						| series in
+						|
+						+numberToWord(notification.classic.record.wins + notification.classic.record.losses)
+						|
+						| games, earning you
+						|
+						strong #{notification.classic.score.final} points
+						| !
+				else if notification.type == 'classic-loss'
+					span
+						| You lost your
+						|
+						strong #{notification.classic.team.teamName}
+						|
+						| series in
+						|
+						+numberToWord(notification.classic.record.wins + notification.classic.record.losses)
+						|
+						| games, costing you
+						|
+						strong #{Math.abs(notification.classic.score.final)}
+							|
+							|
+							if notification.classic.score.final == -1
+								| point
+							else
+								| points
+						| .
+				else if notification.type == 'postponement'
+					strong Heads up!
+					|
+					|
+					span
+						| The #{notification.game.away.team.teamName}/#{notification.game.home.team.teamName} game originally scheduled for #{dateFormat(notification.originalStartTime, 'mmmm dS')} has been postponed so your
+						|
+						strong #{notification.classic.team.teamName}
+						|
+						| selection has been automatically unpicked for you.
+				else if notification.type == 'unnecessary'
+					strong Heads up!
+					|
+					|
+					span
+						| Your
+						|
+						strong #{notification.classic.team.teamName}
+						|
+						| selection in the #{notification.game.away.team.teamName}/#{notification.game.home.team.teamName} game on #{dateFormat(notification.game.startTime, 'mmmm dS')} is no longer necessary so it's been automatically unpicked for you.
+			div.col-1.pl-0
+				a.close(href='/notifications/dismiss/' + notification._id)
+					span &times;
+
+mixin numberToWord(number)
+	if number == 4
+		| four
+	else if number == 5
+		| five
+	else if number == 6
+		| six
+	else if number == 7
+		| seven
