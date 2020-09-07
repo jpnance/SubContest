@@ -143,7 +143,7 @@ module.exports.showAllForDate = function(request, response) {
 						game.homeTeam.picks.push(key);
 					}
 
-					if (key == session.username) {
+					if (session && key == session.username) {
 						game.sessionPick = game.picks[key];
 					}
 				});
