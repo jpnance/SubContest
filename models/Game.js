@@ -9,11 +9,11 @@ var gameSchema = new Schema({
 	season: { type: Number, required: true, default: process.env.SEASON },
 	awayTeam: {
 		abbreviation: { type: String, ref: 'Team', required: true },
-		score: { type: Number, default: 0 }
+		score: { type: Number }
 	},
 	homeTeam: {
 		abbreviation: { type: String, ref: 'Team', required: true },
-		score: { type: Number, default: 0 }
+		score: { type: Number }
 	},
 	kickoff: { type: Date },
 	week: { type: Number, required: true },
@@ -23,58 +23,30 @@ var gameSchema = new Schema({
 });
 
 gameSchema.methods.hasStartTime = function() {
-	return this.startTime && this.status && !this.status.startTimeTBD;
+	return this.kickoff;
 };
 
 gameSchema.methods.isPastStartTime = function() {
-	return this.startTime && Date.now() >= this.startTime;
-};
-
-gameSchema.methods.isWarmingUp = function() {
-	return this.status && this.status.statusCode == 'PW';
-};
-
-gameSchema.methods.isDelayed = function() {
-	return this.status && (this.status.statusCode == 'PI' || this.status.statusCode == 'PR' || this.status.statusCode == 'PS' || this.status.statusCode == 'PY');
-};
-
-gameSchema.methods.hasBeenPostponed = function() {
-	return this.status && (this.status.statusCode == 'DI' || this.status.statusCode == 'DR' || this.status.statusCode == 'DS' || this.status.statusCode == 'DV');
-};
-
-gameSchema.methods.hasBeenCanceled = function() {
-	return this.status && this.status.statusCode == 'CO';
+	return this.kickoff && Date.now() >= this.kickoff;
 };
 
 gameSchema.methods.hasPotentiallyStarted = function() {
-	return this.isPastStartTime() && !this.isDelayed();
-};
-
-gameSchema.methods.hasDefinitelyStarted = function() {
-	return (this.hasPotentiallyStarted() || this.hasBeenSuspended()) && this.inning.number;
-};
-
-gameSchema.methods.hasBeenSuspended = function() {
-	return this.status && this.status.statusCode == 'UR';
+	return this.isPastStartTime();
 };
 
 gameSchema.methods.isCool = function(hours) {
-	var later = new Date(this.startTime);
+	var later = new Date(this.kickoff);
 	later.setMinutes(later.getMinutes() + 210);
 
 	return Date.now() >= later;
 };
 
 gameSchema.methods.isFinal = function() {
-	return this.status && (this.status.statusCode == 'F' || this.status.statusCode == 'FR');
+	return this.awayTeam.score != null && this.homeTeam.score != null;
 };
 
 gameSchema.methods.isFinalAndCool = function() {
 	return this.isFinal() && this.isCool();
-};
-
-gameSchema.methods.isOver = function() {
-	return this.status.statusCode == 'O' || this.status.statusCode == 'F' || this.status.statusCode == 'FR';
 };
 
 gameSchema.methods.syncWithApi = function() {
@@ -162,7 +134,7 @@ gameSchema.methods.syncWithApi = function() {
 				});
 			}
 
-			thisGame.startTime = data.gameData.datetime.dateTime;
+			thisGame.kickoff = data.gameData.datetime.dateTime;
 			thisGame.date = data.gameData.datetime.originalDate;
 			thisGame.status = data.gameData.status;
 
@@ -220,36 +192,28 @@ gameSchema.statics.progressSortWithPopulatedTeams = function(a, b) {
 		return -1;
 	}
 	else {
-		if (a.hasBeenPostponed() && !b.hasBeenPostponed()) {
-			return 1;
-		}
-		else if (!a.hasBeenPostponed() && b.hasBeenPostponed()) {
+		if (a.hasStartTime() && !b.hasStartTime()) {
 			return -1;
 		}
+		else if (!a.hasStartTime() && b.hasStartTime()) {
+			return 1;
+		}
 		else {
-			if (!a.status.startTimeTBD && !b.status.startTimeTBD && a.startTime < b.startTime) {
+			if (a.kickoff < b.kickoff) {
 				return -1;
 			}
-			else if (!a.status.startTimeTBD && !b.status.startTimeTBD && a.startTime > b.startTime) {
+			else if (a.kickoff > b.kickoff) {
 				return 1;
 			}
 			else {
-				if (a.away.team.teamName < b.away.team.teamName) {
+				if (a.awayTeam.abbreviation < b.awayTeam.abbreviation) {
 					return -1;
 				}
-				else if (a.away.team.teamName > b.away.team.teamName) {
+				else if (a.awayTeam.abbreviation > b.awayTeam.abbreviation) {
 					return 1;
 				}
 				else {
-					if (a.gameNumber < b.gameNumber) {
-						return -1;
-					}
-					else if (a.gameNumber > b.gameNumber) {
-						return 1;
-					}
-					else {
-						return 0;
-					}
+					return 0;
 				}
 			}
 		}

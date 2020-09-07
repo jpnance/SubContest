@@ -142,13 +142,17 @@ module.exports.showAllForDate = function(request, response) {
 					else if (game.picks[key] == game.homeTeam.abbreviation) {
 						game.homeTeam.picks.push(key);
 					}
+
+					if (key == session.username) {
+						game.sessionPick = game.picks[key];
+					}
 				});
 
 				game.awayTeam.picks.sort();
 				game.homeTeam.picks.sort();
 			});
 
-			games.sort();
+			games.sort(Game.progressSortWithPopulatedTeams);
 
 			var responseData = {
 				session: session,

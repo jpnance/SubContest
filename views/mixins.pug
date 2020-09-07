@@ -67,17 +67,7 @@ mixin gameCard(game, showDate)
 			}
 		}
 
-		if (game.isDelayed() || game.hasBeenSuspended() || game.hasBeenCanceled()) {
-			classes.header.background.push('bg-warning');
-			classes.header.linkText.push('text-dark');
-		}
-
-		if (game.hasBeenPostponed()) {
-			classes.header.background.push('bg-secondary');
-			classes.header.linkText.push('text-white');
-		}
-
-		if (game.hasDefinitelyStarted() && !game.isFinal()) {
+		if (game.hasPotentiallyStarted() && !game.isFinal()) {
 			classes.header.background.push('bg-primary');
 			classes.header.linkText.push('text-white');
 			classes.away.picksText.push('text-dark');
@@ -88,29 +78,29 @@ mixin gameCard(game, showDate)
 			if (game.classic) {
 				classes.header.linkText.push('text-white');
 
-				if (game.classic.team._id == game.away.team._id) {
-					if (game.away.winner) {
+				if (game.sessionPick == game.awayTeam.abbreviation) {
+					if (game.winner == game.awayTeam.abbreviation) {
 						classes.header.background.push('bg-success');
 					}
-					else if (game.home.winner) {
+					else if (game.winner == game.homeTeam.abbreviation) {
 						classes.header.background.push('bg-danger');
 					}
 				}
-				else if (game.classic.team._id == game.home.team._id) {
-					if (game.home.winner) {
+				else if (game.sessionPick == game.homeTeam.abbreviation) {
+					if (game.winner == game.homeTeam.abbreviation) {
 						classes.header.background.push('bg-success');
 					}
-					if (game.away.winner) {
+					if (game.winner == game.awayTeam.abbreviation) {
 						classes.header.background.push('bg-danger');
 					}
 				}
 			}
 
-			if (game.away.winner) {
+			if (game.winner == game.awayTeam.abbreviation) {
 				classes.away.picksText.push('text-success');
 				classes.home.picksText.push('text-danger');
 			}
-			else if (game.home.winner) {
+			else if (game.winner == game.homeTeam.abbreviation) {
 				classes.home.picksText.push('text-success');
 				classes.away.picksText.push('text-danger');
 			}
@@ -118,41 +108,19 @@ mixin gameCard(game, showDate)
 
 	div.col-xs-12.col-sm-6.col-md-6.col-lg-4.mb-4(id='game-' + game._id)
 		if showDate
-			h6.text-muted.text-center #{dateFormat(game.startTime, 'mmmm dS')}
+			h6.text-muted.text-center #{dateFormat(game.kickoff, 'mmmm dS')}
 		div.card(class=classes.card.border)
 			div.card-header.py-1(class=classes.header.background)
 				div.row.justify-content-center
 					div.col-10.col-sm-12.col-md-12.text-center
-						a(href='https://www.mlb.com/gameday/' + game._id class=classes.header.linkText target='_blank')
-							if game.gameNumber
-								|
-								| G#{game.gameNumber}:
-								|
-
-							if game.isDelayed()
-								| Delayed
-							else if game.hasBeenPostponed()
-								| Postponed
-							else if game.hasBeenCanceled()
-								| Canceled
-							else if !game.hasPotentiallyStarted()
+						span
+							if !game.hasPotentiallyStarted()
 								if game.hasStartTime()
-									| #{dateFormat(game.startTime, 'h:MMtt')} ET
+									| #{dateFormat(game.kickoff, 'dddd h:MMtt')} ET
 								else
 									| TBD
 							else if game.isFinal()
 								| Final
-								if game.inning.number != 9
-									|
-									| (#{game.inning.number})
-							else if game.isOver()
-								| End of the #{game.inning.ordinal}
-							else if game.hasBeenSuspended()
-								| Suspended
-							else if game.hasDefinitelyStarted()
-								| #{game.inning.state} of the #{game.inning.ordinal}
-							else if game.isWarmingUp()
-								| Warmup
 							else if !game.hasStartTime()
 								| TBD
 							else
@@ -162,7 +130,7 @@ mixin gameCard(game, showDate)
 				+teamRow(game, 'awayTeam', classes.away)
 				+teamRow(game, 'homeTeam', classes.home)
 
-			if session && !game.hasDefinitelyStarted() && !game.hasBeenPostponed() && !game.hasBeenCanceled()
+			if session && !game.hasPotentiallyStarted()
 				div.card-footer.text-center
 					div.btn-group
 						+teamButton(session, game, game.away)
@@ -174,21 +142,13 @@ mixin teamRow(game, side, classes)
 			div.col-6.offset-2.col-sm-8.offset-sm-1.col-md-8.p-0
 					h5.mb-0.text-nowrap #{game[side].abbreviation}
 			h2.col-2.text-center.text-nowrap.font-weight-normal.p-0.mb-0(class=classes.scoreText)
-				if game.hasDefinitelyStarted()
+				if game.hasPotentiallyStarted()
 					| #{game[side].score}
 		div.row
-			if game.hasDefinitelyStarted() && game[side].picks && game[side].picks.length > 0
+			if game.hasPotentiallyStarted() && game[side].picks && game[side].picks.length > 0
 				div.picks.col-6.offset-2.col-sm-8.offset-sm-1.p-0.mb-1.mt-2(class=classes.picksText)
 					each pick in game[side].picks
-						span.d-inline-block
-							a(href='/picks/' + pick.user.username class=classes.picksText)
-								| #{pick.user.displayName}
-							|
-							|
-							span.record
-								+record(pick)
-							if pick != game[side].picks[game[side].picks.length - 1]
-								| ,
+						span.d-inline-block #{pick}
 						|
 						|
 
