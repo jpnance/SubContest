@@ -97,95 +97,63 @@ module.exports.showAllForTeam = function(request, response) {
 
 module.exports.showAllForDate = function(request, response) {
 	Session.withActiveSession(request, function(error, session) {
-		var dateString;
+		var week = request.params.week;
 
-		if (!request.params.date) {
+		if (!week) {
 			var now = new Date();
-			now.setMinutes(now.getMinutes() - now.getTimezoneOffset() - 180);
 
-			dateString = dateFormat(now, 'yyyy-mm-dd', true);
-		}
-		else {
-			dateString = dateFormat(request.params.date, 'yyyy-mm-dd', true);
-		}
+			var start = new Date('2020-09-05 00:00:00');
+			var days = Math.floor((now - start) / 86400000);
 
-		if (dateString < '2019-03-20') {
-			dateString = '2019-03-20';
-		}
-
-		if (dateString > '2019-09-29') {
-			dateString = '2019-09-29';
+			if (days < 7) {
+				week = 1;
+			}
+			else {
+				week = Math.floor((days / 7) + 1);
+			}
 		}
 
-		var today = new Date(dateString);
-		today.setHours(today.getHours() + 14);
-
-		var tomorrow = new Date(today);
-		tomorrow.setHours(today.getHours() + 18);
-
-		var yesterday = new Date(today);
-		yesterday.setHours(today.getHours() - 18);
+		if (week < 1) {
+			week = 1;
+		}
+		else if (week > 17) {
+			week = 17;
+		}
 
 		var data = [
-			Game.find({ season: process.env.SEASON, date: dateString, 'away.team': { '$nin': [159, 160] }, 'home.team': { '$nin': [159, 160] } }).sort('startTime away.team.teamName').populate('away.team away.probablePitcher home.team home.probablePitcher'),
-			Classic.find({ season: process.env.SEASON }).populate('user team')
+			Game.find({ season: process.env.SEASON, week: week }).sort('startTime awayTeam.abbreviation')
 		];
 
 		Promise.all(data).then(function(values) {
 			var games = values[0];
-			var classics = values[1];
 
 			games.forEach(function(game) {
-				game.away.picks = [];
-				game.home.picks = [];
+				game.awayTeam.picks = [];
+				game.homeTeam.picks = [];
 
-				classics.forEach(function(classic) {
-					if (session && session.user.username == classic.user.username) {
-						if (classic.team._id == game.away.team._id) {
-							game.away.team.classic = classic;
-						}
+				if (!game.picks) {
+					return;
+				}
 
-						if (classic.team._id == game.home.team._id) {
-							game.home.team.classic = classic;
-						}
+				Object.keys(game.picks).forEach(key => {
+					if (game.picks[key] == game.awayTeam.abbreviation) {
+						game.awayTeam.picks.push(key);
 					}
-
-					if (classic.picks.indexOf(game._id) > -1) {
-						if (session && session.user.username == classic.user.username) {
-							game.classic = classic;
-
-							if (classic.team._id == game.away.team._id) {
-								game.away.picked = true;
-							}
-							else if (classic.team._id == game.home.team._id) {
-								game.home.picked = true;
-							}
-						}
-
-						if (game.hasDefinitelyStarted()) {
-							if (classic.team._id == game.away.team._id) {
-								game.away.picks.push(classic);
-							}
-
-							if (classic.team._id == game.home.team._id) {
-								game.home.picks.push(classic);
-							}
-						}
+					else if (game.picks[key] == game.homeTeam.abbreviation) {
+						game.homeTeam.picks.push(key);
 					}
 				});
 
-				game.away.picks.sort(Classic.populatedUserDisplayNameSort);
-				game.home.picks.sort(Classic.populatedUserDisplayNameSort);
+				game.awayTeam.picks.sort();
+				game.homeTeam.picks.sort();
 			});
 
-			games.sort(Game.progressSortWithPopulatedTeams);
+			games.sort();
 
 			var responseData = {
 				session: session,
 				games: games,
-				yesterday: yesterday,
-				today: today,
-				tomorrow: tomorrow
+				week: week
 			};
 
 			response.render('schedule/all', responseData);

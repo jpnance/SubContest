@@ -7,36 +7,19 @@ var Player = require('../models/Player');
 var gameSchema = new Schema({
 	_id: { type: Number },
 	season: { type: Number, required: true, default: process.env.SEASON },
-	startTime: { type: Date },
-	gameNumber: { type: Number },
-	date: { type: String },
-	away: {
-		team: { type: Number, ref: 'Team', required: true },
-		probablePitcher: { type: Number, ref: 'Player' },
-		score: { type: Number, default: 0 },
-		winner: { type: Boolean }
+	awayTeam: {
+		abbreviation: { type: String, ref: 'Team', required: true },
+		score: { type: Number, default: 0 }
 	},
-	home: {
-		team: { type: Number, ref: 'Team', required: true },
-		probablePitcher: { type: Number, ref: 'Player' },
-		score: { type: Number, default: 0 },
-		winner: { type: Boolean }
+	homeTeam: {
+		abbreviation: { type: String, ref: 'Team', required: true },
+		score: { type: Number, default: 0 }
 	},
-	status: {
-		abstractGameState: { type: String, required: true },
-		codedGameState: { type: String, required: true },
-		detailedState: { type: String, required: true },
-		statusCode: { type: String, required: true },
-		startTimeTBD: { type: Boolean },
-		abstractGameCode: { type: String, required: true },
-		reason: { type: String },
-	},
-	inning: {
-		number: { type: Number },
-		ordinal: { type: String },
-		state: { type: String },
-		half: { type: String }
-	}
+	kickoff: { type: Date },
+	week: { type: Number, required: true },
+	line: { type: Number },
+	picks: { type: Object },
+	winner: { type: String, ref: 'Team' }
 });
 
 gameSchema.methods.hasStartTime = function() {
