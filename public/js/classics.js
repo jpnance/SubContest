@@ -81,7 +81,6 @@ $(document).ready(function() {
 		$.post($form.attr('action'), $form.serializeArray(), function() {
 			window.location = '/login?success=email-sent';
 		}).fail(function(response) {
-			console.log(response.status);
 			if (response.status == 400) {
 				window.location = '/login?error=invalid-email';
 			}
