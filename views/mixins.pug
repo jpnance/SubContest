@@ -106,7 +106,7 @@ mixin gameCard(game, showDate)
 						span
 							if !game.hasPotentiallyStarted()
 								if game.hasStartTime()
-									| #{dateFormat(game.kickoff, 'dddd h:MMtt')} ET
+									| #{dateFormat(game.kickoff, 'dddd "at" h:MMtt')} ET
 								else
 									| TBD
 							else if game.isFinal()
