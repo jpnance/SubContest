@@ -68,7 +68,7 @@ mixin gameCard(game, showDate)
 		}
 
 		if (game.isFinal()) {
-			if (game.classic) {
+			if (game.sessionPick) {
 				classes.header.linkText.push('text-white');
 
 				if (game.sessionPick == game.awayTeam.abbreviation) {
@@ -106,7 +106,7 @@ mixin gameCard(game, showDate)
 			div.card-header.py-1(class=classes.header.background)
 				div.row.justify-content-center
 					div.col-10.col-sm-12.col-md-12.text-center
-						span
+						span(class=classes.header.linkText)
 							if !game.hasPotentiallyStarted()
 								if game.hasStartTime()
 									| #{dateFormat(game.kickoff, 'dddd "at" h:MMtt')} ET
