@@ -208,74 +208,68 @@ module.exports.showStandings = function(request, response) {
 
 module.exports.pick = function(request, response) {
 	Session.withActiveSession(request, function(error, session) {
+		if (error) {
+			response.send(error);
+			return;
+		}
+
+		if (!session.user.isEligibleFor(process.env.SEASON)) {
+			response.status(403).send({ message: 'You are not eligible for this season.' });
+			return;
+		}
+
 		var data = [
-			Classic.findOne({ season: process.env.SEASON, user: session.user._id, team: request.params.teamId }),
-			Classic.findOne({ season: process.env.SEASON, user: session.user._id, team: { '$ne': request.params.teamId }, picks: request.params.gameId }),
 			Game.findById(request.params.gameId)
 		];
 
 		Promise.all(data).then(function(values) {
-			var classic = values[0];
-			var classicCollision = values[1];
-			var game = values[2];
+			var game = values[0];
 
-			var verificationPromises = [];
-
-			if (game.hasPotentiallyStarted() && !game.hasDefinitelyStarted()) {
-				verificationPromises.push(game.syncWithApi());
+			if (game.isPastStartTime()) {
+				response.status(403).send({ message: 'It\'s already past that game\'s start time.' });
+				return;
 			}
 
-			Promise.all(verificationPromises).then(function(values) {
-				if (values.length > 0) {
-					game = values[0];
-				}
+			if (game.awayTeam.abbreviation != request.params.teamId && game.homeTeam.abbreviation != request.params.teamId) {
+				response.status(403).send({ message: 'That team isn\'t playing in that game.' });
+				return;
+			}
 
-				var classicPromises = [];
+			var existingWeekPicksPromiseParameters = {
+				season: process.env.SEASON,
+				week: game.week,
+				'$and': [
+					{ 'awayTeam.abbreviation': { '$ne': game.awayTeam.abbreviation } },
+					{ 'homeTeam.abbreviation': { '$ne': game.homeTeam.abbreviation } }
+				]
+			};
 
-				if (game.hasDefinitelyStarted() || game.hasBeenPostponed() || game.hasBeenCanceled()) {
-					response.sendStatus(500);
+			existingWeekPicksPromiseParameters['picks.' + session.username] = { '$exists': true };
+
+			var existingWeekPicksPromises = [
+				Game.find(existingWeekPicksPromiseParameters)
+			];
+
+			Promise.all(existingWeekPicksPromises).then(function(values) {
+				var existingWeekPicks = values[0];
+				var gamePromises = [];
+
+				if (existingWeekPicks.length > 4) {
+					response.status(403).send({ message: 'You\'ve already made five picks this week.' });
 					return;
 				}
-
-				if (game.away.team != request.params.teamId && game.home.team != request.params.teamId) {
-					response.sendStatus(500);
-					return;
+				else {
+					game.set('picks.' + session.username, request.params.teamId, { strict: false });
+					gamePromises.push(game.save());
 				}
 
-				if (!classic) {
-					classic = new Classic({ season: process.env.SEASON, user: session.user._id, team: request.params.teamId });
-				}
-
-				if (classicCollision) {
-					classicCollision.unpick(game._id);
-					classicPromises.push(classicCollision.save());
-				}
-
-				Promise.all(classicPromises).then(function() {
-					if (classic.isFinal()) {
-						response.sendStatus(500);
-						return;
-					}
-					else if (classic.picks.length >= 7) {
-						response.sendStatus(500);
-						return;
-					}
-					else {
-						classic.pick(game._id);
-						classicPromises.push(classic.save());
-					}
-
-					Promise.all(classicPromises).then(function() {
-						response.send({
-							success: true,
-							gameId: game._id,
-							teamId: classic.team
-						});
+				Promise.all(gamePromises).then(function() {
+					response.send({
+						success: true,
+						gameId: game._id,
+						teamId: game.picks[session.username]
 					});
 				});
-			}).catch(function(error) {
-				response.send(error);
-				return;
 			});
 		});
 	});
@@ -283,59 +277,43 @@ module.exports.pick = function(request, response) {
 
 module.exports.unpick = function(request, response) {
 	Session.withActiveSession(request, function(error, session) {
+		if (error) {
+			response.send(error);
+			return;
+		}
+
+		if (!session.user.isEligibleFor(process.env.SEASON)) {
+			response.status(403).send({ message: 'You are not eligible for this season.' });
+			return;
+		}
+
 		var data = [
-			Classic.findOne({ season: process.env.SEASON, user: session.user._id, team: request.params.teamId }),
 			Game.findById(request.params.gameId)
 		];
 
 		Promise.all(data).then(function(values) {
-			var classic = values[0];
-			var game = values[1];
+			var game = values[0];
 
-			var verificationPromises = [];
-
-			if (game.hasPotentiallyStarted() && !game.hasDefinitelyStarted()) {
-				verificationPromises.push(game.syncWithApi());
+			if (game.isPastStartTime()) {
+				response.status(403).send({ message: 'It\'s already past that game\'s start time.' });
+				return;
 			}
 
-			Promise.all(verificationPromises).then(function(values) {
-				if (values.length > 0) {
-					game = values[0];
-				}
-
-				var classicPromises = [];
-
-				if (game.hasDefinitelyStarted()) {
-					response.sendStatus(500);
-					return;
-				}
-
-				if (game.away.team != request.params.teamId && game.home.team != request.params.teamId) {
-					response.sendStatus(500);
-					return;
-				}
-
-				if (!classic) {
-					response.redirect('/picks');
-				}
-
-				if (classic.isFinal()) {
-					response.sendStatus(500);
-					return;
-				}
-
-				classic.unpick(game._id);
-				classicPromises.push(classic.save());
-
-				Promise.all(classicPromises).then(function() {
-					response.send({
-						success: true,
-						gameId: game._id
-					});
-				});
-			}).catch(function(error) {
-				response.send(error);
+			if (game.awayTeam.abbreviation != request.params.teamId && game.homeTeam.abbreviation != request.params.teamId) {
+				response.status(403).send({ message: 'That team isn\'t playing in that game.' });
 				return;
+			}
+
+			var gamePromises = [];
+
+			game.set('picks.' + session.username, undefined, { strict: false });
+			gamePromises.push(game.save());
+
+			Promise.all(gamePromises).then(function() {
+				response.send({
+					success: true,
+					gameId: game._id
+				});
 			});
 		});
 	});

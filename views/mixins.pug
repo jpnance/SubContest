@@ -49,13 +49,13 @@ mixin gameCard(game, showDate)
 			home: { background: [], linkText: [], pitcherText: ['text-muted'], scoreText: [], picksText: [] }
 		}
 
-		if (game.classic) {
+		if (game.sessionPick) {
 			classes.card.border.push('border-secondary');
 
-			if (game.classic.team._id == game.away.team._id) {
+			if (game.sessionPick == game.awayTeam.abbreviation) {
 				classes.away.background.push('bg-light-gray');
 			}
-			else if (game.classic.team._id == game.home.team._id) {
+			else if (game.sessionPick == game.homeTeam.abbreviation) {
 				classes.home.background.push('bg-light-gray');
 			}
 		}

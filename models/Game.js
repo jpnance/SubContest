@@ -18,7 +18,7 @@ var gameSchema = new Schema({
 	kickoff: { type: Date },
 	week: { type: Number, required: true },
 	line: { type: Number },
-	picks: { type: Object },
+	picks: { type: Object, default: {} },
 	winner: { type: String, ref: 'Team' }
 });
 
