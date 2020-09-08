@@ -22,7 +22,9 @@ mixin teamButton(session, game, side)
 		| #{side.abbreviation}
 
 mixin formatLine(line)
-	if line == 0
+	if line == null
+		| --
+	else if line == 0
 		| PK
 	else if line > 0
 		| +#{line.toFixed(1)}
