@@ -20,6 +20,9 @@ mixin teamButton(session, game, side)
 
 	a.team-button.text-center.btn(href=button.actionLink class=button.classes data-team-id=side.abbreviation)
 		| #{side.abbreviation}
+		|
+		span.record
+			+formatLine(game.line)
 
 mixin formatLine(line)
 	if line == null

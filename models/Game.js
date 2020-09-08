@@ -5,7 +5,7 @@ var Team = require('../models/Team');
 var Player = require('../models/Player');
 
 var gameSchema = new Schema({
-	_id: { type: Number },
+	_id: { type: Schema.Types.ObjectId },
 	season: { type: Number, required: true, default: process.env.SEASON },
 	awayTeam: {
 		abbreviation: { type: String, ref: 'Team', required: true },
