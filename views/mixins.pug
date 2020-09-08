@@ -21,16 +21,13 @@ mixin teamButton(session, game, side)
 	a.team-button.text-center.btn(href=button.actionLink class=button.classes data-team-id=side.abbreviation)
 		| #{side.abbreviation}
 
-mixin pitcher(pitcher, gameDate)
-	if pitcher
-		if gameDate && ['2019-08-23', '2019-08-24', '2019-08-25'].includes(gameDate) && pitcher.nickname
-			| #{pitcher.nickname}
-		else if gameDate && gameDate == '2019-04-15'
-			| Jackie Robinson
-		else
-			| #{pitcher.name}
+mixin formatLine(line)
+	if line == 0
+		| PK
+	else if line > 0
+		| +#{line.toFixed(1)}
 	else
-		| TBD
+		| #{line.toFixed(1)}
 
 mixin record(classic)
 	if classic
@@ -97,7 +94,7 @@ mixin gameCard(game, showDate)
 			}
 		}
 
-	div.col-xs-12.col-sm-6.col-md-6.col-lg-4.mb-4(id='game-' + game._id)
+	div.col-xs-12.col-sm-10.offset-sm-1.col-md-6.offset-md-0.mb-4(id='game-' + game._id)
 		if showDate
 			h6.text-muted.text-center #{dateFormat(game.kickoff, 'mmmm dS')}
 		div.card(class=classes.card.border)
@@ -130,14 +127,21 @@ mixin gameCard(game, showDate)
 mixin teamRow(game, side, classes)
 	li.team-row.list-group-item.py-1(id='team-row-' + game[side].abbreviation class=classes.background)
 		div.row
-			div.col-6.offset-2.col-sm-8.offset-sm-1.col-md-8.p-0
-					h5.mb-0.text-nowrap #{game[side].abbreviation}
+			div.col-8.offset-1.col-sm-8.offset-sm-1.col-md-8.p-0
+					h4.mb-0.text-nowrap
+						img(src='/images/' + game[side].abbreviation.toLowerCase() + '.png')
+						|
+						| #{game[side].team.mascot}
+						span.line.ml-2.text-nowrap
+							if side == 'homeTeam'
+								+formatLine(game.line)
+
 			h2.col-2.text-center.text-nowrap.font-weight-normal.p-0.mb-0(class=classes.scoreText)
 				if game.hasPotentiallyStarted()
 					| #{game[side].score}
 		div.row
 			if game.hasPotentiallyStarted() && game[side].picks && game[side].picks.length > 0
-				div.picks.col-6.offset-2.col-sm-8.offset-sm-1.p-0.mb-1.mt-2(class=classes.picksText)
+				div.picks.col-8.offset-1.col-sm-8.offset-sm-1.p-0.mb-1(class=classes.picksText)
 					each pick in game[side].picks
 						span.d-inline-block #{pick}
 						|

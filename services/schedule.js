@@ -121,7 +121,7 @@ module.exports.showAllForDate = function(request, response) {
 		}
 
 		var data = [
-			Game.find({ season: process.env.SEASON, week: week }).sort('startTime awayTeam.abbreviation')
+			Game.find({ season: process.env.SEASON, week: week }).sort('startTime awayTeam.abbreviation').populate('awayTeam.team homeTeam.team')
 		];
 
 		Promise.all(data).then(function(values) {

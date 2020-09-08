@@ -22,6 +22,20 @@ var gameSchema = new Schema({
 	winner: { type: String, ref: 'Team' }
 });
 
+gameSchema.virtual('awayTeam.team', {
+	ref: 'Team',
+	localField: 'awayTeam.abbreviation',
+	foreignField: 'abbreviation',
+	justOne: true
+});
+
+gameSchema.virtual('homeTeam.team', {
+	ref: 'Team',
+	localField: 'homeTeam.abbreviation',
+	foreignField: 'abbreviation',
+	justOne: true
+});
+
 gameSchema.methods.hasStartTime = function() {
 	return this.kickoff;
 };
