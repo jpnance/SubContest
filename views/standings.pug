@@ -4,29 +4,6 @@ block title
 	+title('Standings')
 
 block content
-	div.col-12.col-sm-10.col-md-8.col-lg-6.col-xl-5.p-0
-		table.table.table-sm
-			tr
-				th
-				th.text-center Record
-				th.text-center
-					span.d-none.d-sm-inline Maximum
-					span.d-sm-none Max
-				th.text-center
-					span.d-none.d-sm-inline Minimum
-					span.d-sm-none Min
-				th.text-center.table-active Points
-
-			each standing in standings
-				tr
-					td.text-right
-						a(href='/picks/' + standing.user.username) #{standing.user.displayName}
-						div.progress.mb-1(style={ height: '5px' })
-							div.progress-bar.bg-success(role='progressbar' style={ width: standing.progress.wins + '%' })
-							div.progress-bar.bg-danger(role='progressbar' style={ width: standing.progress.losses + '%' })
-							div.progress-bar(role='progressbar' style={ width: standing.progress.open + '%' })
-					td.text-center.align-middle #{standing.record.wins}-#{standing.record.losses}
-					td.text-center.align-middle #{standing.score.potential.maximum}
-					td.text-center.align-middle #{standing.score.potential.minimum}
-					td.text-center.table-active.align-middle
-						| #{standing.score.final}
+	div.container.pb-3
+		h1 Under Maintenance
+		p The standings page is being updated for 2020 and will be available soon after Week 1 if not before.
