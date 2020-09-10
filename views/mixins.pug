@@ -22,17 +22,24 @@ mixin teamButton(session, game, side)
 		| #{side.abbreviation}
 		|
 		span.record
-			+formatLine(game.line)
+			if side.abbreviation == game.homeTeam.abbreviation
+				+formatLine(game.line, false)
+			else if side.abbreviation == game.awayTeam.abbreviation
+				+formatLine(game.line, true)
 
-mixin formatLine(line)
+mixin formatLine(line, reverse)
 	if line == null
 		| --
 	else if line == 0
 		| PK
-	else if line > 0
-		| +#{line.toFixed(1)}
 	else
-		| #{line.toFixed(1)}
+		if reverse
+			- line = -1 * line
+
+		if line > 0
+			| +#{line.toFixed(1)}
+		else
+			| #{line.toFixed(1)}
 
 mixin record(classic)
 	if classic
