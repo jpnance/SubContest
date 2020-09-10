@@ -121,11 +121,19 @@ module.exports.showAllForDate = function(request, response) {
 		}
 
 		var data = [
-			Game.find({ season: process.env.SEASON, week: week }).sort('startTime awayTeam.abbreviation').populate('awayTeam.team homeTeam.team')
+			Game.find({ season: process.env.SEASON, week: week }).sort('startTime awayTeam.abbreviation').populate('awayTeam.team homeTeam.team'),
+			User.find({ seasons: process.env.SEASON })
 		];
 
 		Promise.all(data).then(function(values) {
 			var games = values[0];
+			var users = values[1];
+
+			var usersMap = {};
+
+			users.forEach(user => {
+				usersMap[user.username] = user.displayName;
+			});
 
 			games.forEach(function(game) {
 				game.awayTeam.picks = [];
@@ -137,10 +145,10 @@ module.exports.showAllForDate = function(request, response) {
 
 				Object.keys(game.picks).forEach(key => {
 					if (game.picks[key] == game.awayTeam.abbreviation) {
-						game.awayTeam.picks.push(key);
+						game.awayTeam.picks.push(usersMap[key]);
 					}
 					else if (game.picks[key] == game.homeTeam.abbreviation) {
-						game.homeTeam.picks.push(key);
+						game.homeTeam.picks.push(usersMap[key]);
 					}
 
 					if (session && key == session.username) {
