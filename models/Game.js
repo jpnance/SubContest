@@ -19,7 +19,8 @@ var gameSchema = new Schema({
 	week: { type: Number, required: true },
 	line: { type: Number },
 	picks: { type: Object, default: {} },
-	winner: { type: String, ref: 'Team' }
+	winner: { type: String, ref: 'Team' },
+	push: { type: Boolean }
 });
 
 gameSchema.virtual('awayTeam.team', {
