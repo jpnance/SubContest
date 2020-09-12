@@ -41,6 +41,14 @@ mixin formatLine(line, reverse)
 		else
 			| #{line.toFixed(1)}
 
+mixin formatPoints(points)
+	if points == 0.5
+		| &frac12;
+	else if points - Math.floor(points) == 0.5
+		| #{Math.floor(points)} &frac12;
+	else
+		| #{Math.floor(points)}
+
 mixin record(classic)
 	if classic
 		| (#{classic.record.wins}-#{classic.record.losses})

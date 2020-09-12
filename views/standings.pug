@@ -4,7 +4,7 @@ block title
 	+title('Standings')
 
 block content
-	div.col-10.col-sm-10.col-md-8.col-lg-6.col-xl-5.p-0
+	div.col-12.col-sm-10.col-md-8.col-lg-6.col-xl-5.p-0
 		table.table.table-sm
 			tr
 				th.text-center Rank
@@ -15,4 +15,5 @@ block content
 				tr
 					td.text-center #{standing.rank}
 					td.text-center #{standing.user.displayName}
-					td.text-center.table-active.align-middle #{standing.points}
+					td.text-center.table-active.align-middle
+						+formatPoints(standing.points)
