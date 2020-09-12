@@ -78,20 +78,15 @@ mixin gameCard(game, showDate)
 			if (game.sessionPick) {
 				classes.header.linkText.push('text-white');
 
-				if (game.sessionPick == game.awayTeam.abbreviation) {
-					if (game.winner == game.awayTeam.abbreviation) {
+				if (game.sessionPick) {
+					if (game.winner && game.winner == game.sessionPick) {
 						classes.header.background.push('bg-success');
 					}
-					else if (game.winner == game.homeTeam.abbreviation) {
+					else if (game.winner && game.winner != game.sessionPick) {
 						classes.header.background.push('bg-danger');
 					}
-				}
-				else if (game.sessionPick == game.homeTeam.abbreviation) {
-					if (game.winner == game.homeTeam.abbreviation) {
-						classes.header.background.push('bg-success');
-					}
-					if (game.winner == game.awayTeam.abbreviation) {
-						classes.header.background.push('bg-danger');
+					else if (game.push) {
+						classes.header.background.push('bg-secondary');
 					}
 				}
 			}
@@ -103,6 +98,10 @@ mixin gameCard(game, showDate)
 			else if (game.winner == game.homeTeam.abbreviation) {
 				classes.home.picksText.push('text-success');
 				classes.away.picksText.push('text-danger');
+			}
+			else if (game.push) {
+				classes.home.picksText.push('text-secondary');
+				classes.away.picksText.push('text-secondary');
 			}
 		}
 
