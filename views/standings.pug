@@ -4,6 +4,15 @@ block title
 	+title('Standings')
 
 block content
-	div.container.pb-3
-		h1 Under Maintenance
-		p The standings page is being updated for 2020 and will be available soon after Week 1 if not before.
+	div.col-10.col-sm-10.col-md-8.col-lg-6.col-xl-5.p-0
+		table.table.table-sm
+			tr
+				th.text-center Rank
+				th.text-center Player
+				th.text-center.table-active Points
+
+			each standing in standings
+				tr
+					td.text-center #{standing.rank}
+					td.text-center #{standing.user.displayName}
+					td.text-center.table-active.align-middle #{standing.points}

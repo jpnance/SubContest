@@ -135,63 +135,41 @@ module.exports.showAllForTeam = function(request, response) {
 module.exports.showStandings = function(request, response) {
 	Session.withActiveSession(request, function(error, session) {
 		var dataPromises = [
-			Classic.find({ season: process.env.SEASON }).populate('user')
+			User.find({ seasons: process.env.SEASON }),
+			Game.find({ season: process.env.SEASON })
 		];
 
 		Promise.all(dataPromises).then(function(values) {
-			var classics = values[0];
+			var users = values[0];
+			var games = values[1];
 
 			var standingsMap = {};
 			var standings = [];
 
-			classics.forEach(function(classic) {
-				if (!standingsMap[classic.user.username]) {
-					standingsMap[classic.user.username] = {
-						user: classic.user,
-						record: {
-							wins: 0,
-							losses: 0,
-							winningPercentage: null
-						},
-						score: {
-							final: 0,
-							potential: {
-								maximum: 0,
-								minimum: 0
-							}
-						},
-						progress: {
-							wins: 0,
-							losses: 0,
-							open: 0
-						}
+			users.forEach(function(user) {
+				if (!standingsMap[user.username]) {
+					standingsMap[user.username] = {
+						user: user,
+						points: 0
 					};
 				}
+			});
 
-				standingsMap[classic.user.username].record.wins += classic.record.wins;
-				standingsMap[classic.user.username].record.losses += classic.record.losses;
+			games.forEach(function(game) {
+				if (game.picks) {
+					Object.keys(game.picks).forEach(function(username) {
+						var userPick = game.picks[username];
 
-				if (standingsMap[classic.user.username].record.wins + standingsMap[classic.user.username].record.losses > 0) {
-					standingsMap[classic.user.username].record.winningPercentage = standingsMap[classic.user.username].record.wins / (standingsMap[classic.user.username].record.wins + standingsMap[classic.user.username].record.losses);
-				}
-
-				if (classic.score.potential) {
-					standingsMap[classic.user.username].score.potential.maximum += classic.score.potential.best;
-					standingsMap[classic.user.username].score.potential.minimum += classic.score.potential.worst;
-				}
-
-				if (classic.score.final) {
-					standingsMap[classic.user.username].score.final += classic.score.final;
-
-					if (classic.record.wins == 4) {
-						standingsMap[classic.user.username].progress.wins += (4 / 120) * 100;
-					}
-					else if (classic.record.losses == 4) {
-						standingsMap[classic.user.username].progress.losses += (4 / 120) * 100;
-					}
-				}
-				else {
-					standingsMap[classic.user.username].progress.open += (Math.max(classic.record.wins, classic.record.losses) / 120) * 100;
+						if (!userPick) {
+							return;
+						}
+						else if (game.winner && game.winner == userPick) {
+							standingsMap[username].points += 1;
+						}
+						else if (game.push) {
+							standingsMap[username].points += 0.5;
+						}
+					});
 				}
 			});
 
@@ -199,7 +177,31 @@ module.exports.showStandings = function(request, response) {
 				standings.push(standingsMap[key]);
 			});
 
-			standings = standings.sort(Classic.standingsSort);
+			standings = standings.sort(function(a, b) {
+				if (a.points > b.points) {
+					return -1;
+				}
+				else if (a.points < b.points) {
+					return 1;
+				}
+				else {
+					if (a.user.displayName < b.user.displayName) {
+						return -1;
+					}
+					else if (a.user.displayName > b.user.displayName) {
+						return 1;
+					}
+				}
+			});
+
+			for (var i = 0; i < standings.length; i++) {
+				if (i == 0) {
+					standings[i].rank = i + 1;
+				}
+				else if (standings[i].points != standings[i - 1].points) {
+					standings[i].rank = i + 1;
+				}
+			}
 
 			response.render('standings', { session: session, standings: standings });
 		});
