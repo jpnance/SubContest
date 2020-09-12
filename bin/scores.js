@@ -71,7 +71,9 @@ request.get('https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboa
 
 		console.log(conditions, updates);
 
-		gamePromises.push(Game.findOneAndUpdate(conditions, updates, { returnOriginal: false, useFindAndModify: false }));
+		if (process.argv.includes('update')) {
+			gamePromises.push(Game.findOneAndUpdate(conditions, updates, { returnOriginal: false, useFindAndModify: false }));
+		}
 	});
 
 	Promise.all(gamePromises).then(function(games) {
