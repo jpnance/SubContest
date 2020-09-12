@@ -100,25 +100,10 @@ module.exports.showAllForDate = function(request, response) {
 		var week = request.params.week;
 
 		if (!week) {
-			var now = new Date();
-
-			var start = new Date('2020-09-09 00:00:00');
-			var days = Math.floor((now - start) / 86400000);
-
-			if (days < 7) {
-				week = 1;
-			}
-			else {
-				week = Math.floor((days / 7) + 1);
-			}
+			week = Game.getWeek();
 		}
 
-		if (week < 1) {
-			week = 1;
-		}
-		else if (week > 17) {
-			week = 17;
-		}
+		week = Game.cleanWeek(week);
 
 		var data = [
 			Game.find({ season: process.env.SEASON, week: week }).sort('startTime awayTeam.abbreviation').populate('awayTeam.team homeTeam.team'),

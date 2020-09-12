@@ -235,4 +235,35 @@ gameSchema.statics.progressSortWithPopulatedTeams = function(a, b) {
 	}
 };
 
+gameSchema.statics.getWeek = function(date) {
+	var now = new Date();
+
+	if (date) {
+		now = new Date(date);
+	}
+
+	var start = new Date('2020-09-08 00:00:00');
+	var days = Math.floor((now - start) / 86400000);
+
+	if (days < 7) {
+		week = 1;
+	}
+	else {
+		week = Math.floor((days / 7) + 1);
+	}
+
+	return week;
+};
+
+gameSchema.statics.cleanWeek = function(week) {
+	if (week < 1) {
+		week = 1;
+	}
+	else if (week > 17) {
+		week = 17;
+	}
+
+	return week;
+};
+
 module.exports = mongoose.model('Game', gameSchema);
