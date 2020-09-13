@@ -136,12 +136,14 @@ module.exports.showStandings = function(request, response) {
 	Session.withActiveSession(request, function(error, session) {
 		var dataPromises = [
 			User.find({ seasons: process.env.SEASON }),
-			Game.find({ season: process.env.SEASON })
+			Game.find({ season: process.env.SEASON }).sort({ kickoff: 1 })
 		];
 
 		Promise.all(dataPromises).then(function(values) {
 			var users = values[0];
 			var games = values[1];
+
+			var week = Game.cleanWeek(Game.getWeek());
 
 			var standingsMap = {};
 			var standings = [];
@@ -149,7 +151,9 @@ module.exports.showStandings = function(request, response) {
 			users.forEach(function(user) {
 				if (!standingsMap[user.username]) {
 					standingsMap[user.username] = {
+						rank: null,
 						user: user,
+						weekPicks: [],
 						points: 0
 					};
 				}
@@ -168,6 +172,10 @@ module.exports.showStandings = function(request, response) {
 						}
 						else if (game.push) {
 							standingsMap[username].points += 0.5;
+						}
+
+						if (game.isPastStartTime()) {
+							standingsMap[username].weekPicks.push(userPick);
 						}
 					});
 				}
@@ -203,7 +211,7 @@ module.exports.showStandings = function(request, response) {
 				}
 			}
 
-			response.render('standings', { session: session, standings: standings });
+			response.render('standings', { session: session, week: week, standings: standings });
 		});
 	});
 };

@@ -32,6 +32,10 @@ th.team span.record {
 	font-weight: normal;
 }
 
+table.standings td.pick {
+	width: 45px;
+}
+
 td.classic-game span.result {
 	font-size: 80%;
 }

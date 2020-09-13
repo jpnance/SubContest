@@ -4,16 +4,21 @@ block title
 	+title('Standings')
 
 block content
-	div.col-12.col-sm-10.col-md-8.col-lg-6.col-xl-5.p-0
-		table.table.table-sm
+	div.col-12.col-sm-12.col-md-8.col-lg-8.col-xl-8.p-0
+		table.standings.table.table-sm
 			tr
 				th.text-center Rank
 				th.text-center Player
+				th.text-center.d-none.d-sm-table-cell(colspan='5') Picks in Week #{week}
 				th.text-center.table-active Points
 
 			each standing in standings
 				tr
 					td.text-center #{standing.rank}
 					td.text-center #{standing.user.displayName}
+					each i in [0, 1, 2, 3, 4]
+						td.pick.text-center.d-none.d-sm-table-cell
+							if standing.weekPicks[0]
+								| #{standing.weekPicks[0]}
 					td.text-center.table-active.align-middle
 						+formatPoints(standing.points)
