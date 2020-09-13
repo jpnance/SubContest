@@ -18,7 +18,7 @@ block content
 					td.text-center #{standing.user.displayName}
 					each i in [0, 1, 2, 3, 4]
 						td.pick.text-center.d-none.d-sm-table-cell
-							if standing.weekPicks[0]
-								| #{standing.weekPicks[0]}
+							if standing.weekPicks[i]
+								| #{standing.weekPicks[i]}
 					td.text-center.table-active.align-middle
 						+formatPoints(standing.points)
