@@ -19,6 +19,19 @@ block content
 					each i in [0, 1, 2, 3, 4]
 						td.pick.text-center.d-none.d-sm-table-cell
 							if standing.weekPicks[i]
-								| #{standing.weekPicks[i]}
+								-
+									var resultClass = '';
+
+									if (standing.weekPicks[i].result == 'win') {
+										resultClass = 'text-success';
+									}
+									else if (standing.weekPicks[i].result == 'loss') {
+										resultClass = 'text-danger';
+									}
+									else if (standing.weekPicks[i].result == 'push') {
+										resultClass = 'text-secondary';
+									}
+
+								span(class=resultClass) #{standing.weekPicks[i].team}
 					td.text-center.table-active.align-middle
 						+formatPoints(standing.points)

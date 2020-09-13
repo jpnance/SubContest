@@ -175,7 +175,23 @@ module.exports.showStandings = function(request, response) {
 						}
 
 						if (game.isPastStartTime()) {
-							standingsMap[username].weekPicks.push(userPick);
+							var weekPick = {};
+
+							weekPick.team = userPick;
+
+							if (game.isFinal()) {
+								if (game.winner && userPick == game.winner) {
+									weekPick.result = 'win';
+								}
+								else if (game.winner && userPick != game.winner) {
+									weekPick.result = 'loss';
+								}
+								else if (game.push) {
+									weekPick.result = 'push';
+								}
+							}
+
+							standingsMap[username].weekPicks.push(weekPick);
 						}
 					});
 				}
