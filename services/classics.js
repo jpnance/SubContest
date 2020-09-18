@@ -174,7 +174,7 @@ module.exports.showStandings = function(request, response) {
 							standingsMap[username].points += 0.5;
 						}
 
-						if (game.isPastStartTime()) {
+						if (game.week == week && game.isPastStartTime()) {
 							var weekPick = {};
 
 							weekPick.team = userPick;
