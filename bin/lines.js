@@ -64,7 +64,7 @@ request.get('https://wfd.rarii.com/westgate/', function(error, response) {
 	westgateData.data.forEach(footballGame => {
 		var favorite = teamNameToAbbreviation[footballGame.favorite];
 		var underdog = teamNameToAbbreviation[footballGame.underdog];
-		var line = parseFloat(footballGame.line).toFixed(1) || 0;
+		var line = (footballGame.line == 'PK') ? 0 : parseFloat(footballGame.line).toFixed(1);
 
 		lineLookup[favorite + '-' + underdog] = 1 * line;
 		lineLookup[underdog + '-' + favorite] = -1 * line;
