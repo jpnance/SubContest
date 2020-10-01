@@ -80,6 +80,10 @@ request.get('https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboa
 		var winnerPromises = [];
 
 		games.forEach(game => {
+			if (!game) {
+				return;
+			}
+
 			if (game.line && game.awayTeam.score && game.homeTeam.score) {
 				if (game.homeTeam.score + game.line > game.awayTeam.score) {
 					game.winner = game.homeTeam.abbreviation;
