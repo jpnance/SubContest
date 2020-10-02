@@ -84,7 +84,7 @@ request.get('https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboa
 				return;
 			}
 
-			if (game.line && game.awayTeam.score && game.homeTeam.score) {
+			if (game.line != null && game.awayTeam.score && game.homeTeam.score) {
 				if (game.homeTeam.score + game.line > game.awayTeam.score) {
 					game.winner = game.homeTeam.abbreviation;
 					game.push = undefined;
