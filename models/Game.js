@@ -242,7 +242,7 @@ gameSchema.statics.getWeek = function(date) {
 		now = new Date(date);
 	}
 
-	var start = new Date('2020-09-09 00:00:00');
+	var start = new Date('2021-09-08 00:00:00');
 	var days = Math.floor((now - start) / 86400000);
 
 	if (days < 7) {
@@ -259,8 +259,8 @@ gameSchema.statics.cleanWeek = function(week) {
 	if (week < 1) {
 		week = 1;
 	}
-	else if (week > 17) {
-		week = 17;
+	else if (week > 18) {
+		week = 18;
 	}
 
 	return week;

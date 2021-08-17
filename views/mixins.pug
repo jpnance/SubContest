@@ -175,7 +175,7 @@ mixin scheduleNav(lastWeek, thisWeek, nextWeek)
 			a.nav-link.disabled(href='/schedule/' + thisWeek)
 				span Week #{thisWeek}
 
-		if nextWeek < 18
+		if nextWeek <= 18
 			li.nav-item
 				a.nav-link(href='/schedule/' + nextWeek)
 					span Week #{nextWeek} &raquo;
