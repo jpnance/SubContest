@@ -1,63 +1,120 @@
 "status": {
 
-    "abstractGameState": "Final",
-    "codedGameState": "F",
-    "detailedState": "Final",
-    "statusCode": "F",
-    "abstractGameCode": "F"
+    "clock": 0.0,
+    "displayClock": "0:00",
+    "period": 0,
+    "type": {
+        "id": "1",
+        "name": "STATUS_SCHEDULED",
+        "state": "pre",
+        "completed": false,
+        "description": "Scheduled",
+        "detail": "Sun, September 13th at 4:05 PM EDT",
+        "shortDetail": "9/13 - 4:05 PM EDT"
+    }
 
-},
+status": {
 
-
-"status": {
-
-    "abstractGameState": "Live",
-    "codedGameState": "I",
-    "detailedState": "In Progress",
-    "statusCode": "I",
-    "abstractGameCode": "L"
-
-},
-
-
-"status": {
-
-    "abstractGameState": "Live",
-    "codedGameState": "P",
-    "detailedState": "Warmup",
-    "statusCode": "PW",
-    "abstractGameCode": "L"
-
-},
-
+    "clock": 235.0,
+    "displayClock": "3:55",
+    "period": 1,
+    "type": {
+        "id": "2",
+        "name": "STATUS_IN_PROGRESS",
+        "state": "in",
+        "completed": false,
+        "description": "In Progress",
+        "detail": "3:55 - 1st Quarter",
+        "shortDetail": "3:55 - 1st"
+    }
 
 "status": {
 
-    "abstractGameState": "Preview",
-    "codedGameState": "P",
-    "detailedState": "Pre-Game",
-    "statusCode": "P",
-    "abstractGameCode": "P"
-
-},
-
-
-"status": {
-
-    "abstractGameState": "Preview",
-    "codedGameState": "S",
-    "detailedState": "Scheduled",
-    "statusCode": "S",
-    "abstractGameCode": "P"
-
-},
-
+    "clock": 75.0,
+    "displayClock": "1:15",
+    "period": 1,
+    "type": {
+        "id": "2",
+        "name": "STATUS_IN_PROGRESS",
+        "state": "in",
+        "completed": false,
+        "description": "In Progress",
+        "detail": "1:15 - 1st Quarter",
+        "shortDetail": "1:15 - 1st"
+    }
 
 "status": {
 
-	"abstractGameState": "Final",
-	"codedGameState": "FT",
-	"detailedState": "Final",
-	"statusCode": "FT"
+    "clock": 120.0,
+    "displayClock": "2:00",
+    "period": 2,
+    "type": {
+        "id": "2",
+        "name": "STATUS_IN_PROGRESS",
+        "state": "in",
+        "completed": false,
+        "description": "In Progress",
+        "detail": "2:00 - 2nd Quarter",
+        "shortDetail": "2:00 - 2nd"
+    }
 
-},
+"status": {
+
+    "clock": 0.0,
+    "displayClock": "0:00",
+    "period": 2,
+    "type": {
+        "id": "23",
+        "name": "STATUS_HALFTIME",
+        "state": "in",
+        "completed": false,
+        "description": "Halftime",
+        "detail": "Halftime",
+        "shortDetail": "Halftime"
+    }
+
+"status": {
+
+    "clock": 781.0,
+    "displayClock": "13:01",
+    "period": 3,
+    "type": {
+        "id": "2",
+        "name": "STATUS_IN_PROGRESS",
+        "state": "in",
+        "completed": false,
+        "description": "In Progress",
+        "detail": "13:01 - 3rd Quarter",
+        "shortDetail": "13:01 - 3rd"
+    }
+
+"status": {
+
+    "clock": 856.0,
+    "displayClock": "14:16",
+    "period": 4,
+    "type": {
+        "id": "2",
+        "name": "STATUS_IN_PROGRESS",
+        "state": "in",
+        "completed": false,
+        "description": "In Progress",
+        "detail": "14:16 - 4th Quarter",
+        "shortDetail": "14:16 - 4th"
+    }
+
+"status": {
+
+    "clock": 0.0,
+    "displayClock": "0:00",
+    "period": 4,
+    "type": {
+        "id": "3",
+        "name": "STATUS_FINAL",
+        "state": "post",
+        "completed": true,
+        "description": "Final",
+        "detail": "Final",
+        "shortDetail": "Final"
+    }
+
