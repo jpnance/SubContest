@@ -21,7 +21,8 @@ request.get('https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboa
 
 	var scoreboardData = JSON.parse(response.text);
 
-	if (scoreboardData.season.type != 2 && scoreboardData.season.year != process.env.SEASON) {
+	if (scoreboardData.season.type != 2 || scoreboardData.season.year != process.env.SEASON) {
+		process.exit();
 		return;
 	}
 
