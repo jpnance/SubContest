@@ -33,7 +33,8 @@ html(lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml')
 
 			navItems.push({ name: 'Schedule', href: '/schedule' });
 			navItems.push({ name: 'Standings', href: '/standings' });
-			navItems.push({ name: 'Lines', href: 'https://www.westgateresorts.com/hotels/nevada/las-vegas/westgate-las-vegas-resort-casino/supercontest-weekly-card/' });
+			navItems.push({ name: 'Lines', href: 'https://www.westgateresorts.com/hotels/nevada/las-vegas/westgate-las-vegas-resort-casino/supercontest-weekly-card/', target: '_blank' });
+			navItems.push({ name: 'Rules', href: '/rules' });
 
 			if (session) {
 				navItems.push({ name: 'Log Out', href: process.env.LOGIN_SERVICE + '/sessions/delete' });
@@ -73,7 +74,7 @@ html(lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml')
 									a.all-devices.dropdown-item(href=process.env.LOGIN_SERVICE + '/sessions/deleteAll') All Devices
 						else
 							li.nav-item.py-1
-								a.nav-link(href=navItem.href) #{navItem.name}
+								a.nav-link(href=navItem.href target=navItem.target || '_self') #{navItem.name}
 
 		//-
 			if session && session.user.admin

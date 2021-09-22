@@ -3,8 +3,8 @@ var sessions = require('./services/sessions');
 var schedule = require('./services/schedule');
 var classics = require('./services/classics');
 var teams = require('./services/teams');
-var statuses = require('./services/statuses');
-var notifications = require('./services/notifications');
+
+var Session = require('./models/Session');
 
 module.exports = function(app) {
 	app.get('/', schedule.showAllForDate);
@@ -31,19 +31,15 @@ module.exports = function(app) {
 	app.get('/schedule/:week(\\d\\d?)', schedule.showAllForDate);
 	app.get('/schedule/:teamAbbreviation(\\w+)', schedule.showAllForTeam);
 
-	app.get('/picks', classics.showAllForUser);
-	app.get('/picks.json', classics.all);
-	app.get('/picks/:teamAbbreviation([A-Z][A-Z][A-Z]?)', classics.showAllForTeam);
-	app.get('/picks/:username([a-z]+)', classics.showAllForUser);
-	app.get('/picks/:username([a-z]+).json', classics.allForUser);
 	app.get('/pick/:teamId/:gameId', classics.pick);
 	app.get('/unpick/:teamId/:gameId', classics.unpick);
 	app.get('/standings', classics.showStandings);
 
 	app.get('/teams', teams.showAll);
 
-	app.get('/statuses', statuses.showAll);
-
-	app.get('/notifications', notifications.showAll);
-	app.get('/notifications/dismiss/:notificationId', notifications.dismiss);
+	app.get('/rules', function(request, response) {
+		Session.withActiveSession(request, function(error, session) {
+			response.render('rules', { session: session });
+		});
+	});
 };
