@@ -1,5 +1,4 @@
 var users = require('./services/users');
-var sessions = require('./services/sessions');
 var schedule = require('./services/schedule');
 var classics = require('./services/classics');
 var teams = require('./services/teams');
@@ -17,7 +16,6 @@ module.exports = function(app) {
 	});
 
 	app.get('/login', users.loginPrompt);
-	app.get('/logout', sessions.logOut);
 
 	app.get('/users', users.showAll);
 	app.get('/users.json', users.all);
