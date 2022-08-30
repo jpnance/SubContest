@@ -2,7 +2,6 @@ var crypto = require('crypto');
 
 var Session = require('../models/Session');
 var User = require('../models/User');
-var Classic = require('../models/Classic');
 
 module.exports.loginPrompt = function(request, response) {
 	var responseData = {};
@@ -92,9 +91,7 @@ module.exports.signUp = function(request, response) {
 
 				user.save(function(error) {
 					if (!error) {
-						Classic.initialize(user, process.env.SEASON).then(function() {
-							response.redirect('/');
-						});
+						response.redirect('/');
 					}
 					else {
 						response.status(400).send(error);
@@ -140,14 +137,7 @@ module.exports.update = function(request, response) {
 					response.send(error);
 				}
 				else {
-					if (user.seasons.includes(parseInt(process.env.SEASON))) {
-						Classic.initialize(user, process.env.SEASON).then(function() {
-							response.redirect('/');
-						});
-					}
-					else {
-						response.redirect('/');
-					}
+					response.redirect('/users');
 				}
 			});
 		});
