@@ -37,6 +37,9 @@ $(document).ready(function() {
 					}
 				});
 			}
+		}).catch((error) => {
+			$('#modal .modal-body').text(error.responseJSON.message);
+			$('#modal').modal('show');
 		});
 
 		e.preventDefault();
