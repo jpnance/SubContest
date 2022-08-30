@@ -27,7 +27,6 @@ module.exports = function(app) {
 	app.get('/schedule/?', schedule.showAllForDate);
 	app.get('/schedule.json', schedule.allForDate);
 	app.get('/schedule/:week(\\d\\d?)', schedule.showAllForDate);
-	app.get('/schedule/:teamAbbreviation(\\w+)', schedule.showAllForTeam);
 
 	app.get('/pick/:teamId/:gameId', classics.pick);
 	app.get('/unpick/:teamId/:gameId', classics.unpick);
