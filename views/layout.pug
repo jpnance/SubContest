@@ -48,23 +48,11 @@ html(lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml')
 				img.logo.mr-2(src='/images/logo.png' height='30')
 				strong.align-middle SubContest
 			button.navbar-toggler(type='button' data-toggle='collapse' data-target='#navbarNav')
-				if session && session.user.notifications.length > 0
-					span.badge.badge-pill.badge-primary.align-middle.mr-2(style={ 'font-size': '50%' }) #{session.user.notifications.length}
 				span.navbar-toggler-icon
 			div.collapse.navbar-collapse#navbarNav
 				ul.navbar-nav
 					each navItem in navItems
-						if navItem.name == 'Notifications'
-							li.nav-item.dropdown.py-1
-								a.nav-link.dropdown-toggle(href='#' class=(session.user.notifications.length == 0 ? 'disabled' : '') data-toggle='dropdown')
-									| Notifications
-									if session.user.notifications.length > 0
-										span.badge.badge-pill.badge-primary.align-middle.ml-1(style={ 'font-size': '60%' }) #{session.user.notifications.length}
-								div.notifications.dropdown-menu.py-0
-									ul.list-group.list-group-flush
-										each notification in session.user.notifications
-											+notificationListGroupItem(notification)
-						else if navItem.name == 'Log Out'
+						if navItem.name == 'Log Out'
 							li.nav-item.dropdown.py-1
 								a.nav-link.dropdown-toggle(href='#' data-toggle='dropdown')
 									| Log Out

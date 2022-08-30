@@ -45,15 +45,6 @@ sessionSchema.statics.withActiveSession = function(request, callback) {
 			.then(response => {
 				User.findOne({
 					username: response.body.user.username
-				}).populate({
-					path: 'notifications',
-					match: { read: false },
-					populate: {
-						path: 'game classic',
-						populate: {
-							path: 'team home.team away.team'
-						}
-					}
 				}).then(function(user) {
 					callback(null, { username: user.username, user: user });
 				});

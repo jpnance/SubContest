@@ -60,10 +60,6 @@ div.team.unpicked a.team-button.unpick {
 	background-color: #e6e6e6 !important;
 }
 
-li.notification {
-	font-size: 80%;
-}
-
 @media (min-width: 0px) {
 	/* xs */
 	td.classic-game {
@@ -78,10 +74,6 @@ li.notification {
 
 @media (min-width: 768px) {
 	/* md */
-	div.notifications.dropdown-menu {
-		width: 300px;
-	}
-
 	td.classic-game {
 		font-size: 100%;
 		line-height: 0.8rem;
