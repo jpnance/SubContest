@@ -1,0 +1,21 @@
+extends ../layout.pug
+
+block title
+	+title('Edit Game')
+
+block content
+	form.col-12.col-md-8.col-lg-6.col-xl-4(action='/games/edit/' + game._id method='POST')
+		if session && session.user.admin
+			div.form-group
+				label(for='awayTeam') Away Team
+				input.form-control(type='text' id='awayTeam' name='awayTeam' value=game.awayTeam.team.mascot disabled)
+
+			div.form-group
+				label(for='homeTeam') Home Team
+				input.form-control(type='text' id='homeTeam' name='homeTeam' value=game.homeTeam.team.mascot disabled)
+
+			div.form-group
+				label(for='line') Line
+				input.form-control(type='text' id='line' name='line' value=game.line)
+
+		button.btn.btn-primary(type='submit') Edit Game

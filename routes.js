@@ -2,6 +2,7 @@ var users = require('./services/users');
 var schedule = require('./services/schedule');
 var classics = require('./services/classics');
 var teams = require('./services/teams');
+var games = require('./services/games');
 
 var Session = require('./models/Session');
 
@@ -27,6 +28,10 @@ module.exports = function(app) {
 	app.get('/schedule/?', schedule.showAllForDate);
 	app.get('/schedule.json', schedule.allForDate);
 	app.get('/schedule/:week(\\d\\d?)', schedule.showAllForDate);
+
+	app.get('/games', games.showAll);
+	app.get('/games/edit/:gameId', games.edit);
+	app.post('/games/edit/:gameId', games.update);
 
 	app.get('/pick/:teamId/:gameId', classics.pick);
 	app.get('/unpick/:teamId/:gameId', classics.unpick);

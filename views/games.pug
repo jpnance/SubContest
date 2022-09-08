@@ -1,0 +1,13 @@
+extends layout.pug
+
+block title
+	+title('This Week\'s Games')
+
+block content
+	ul
+		each game in games
+			li
+				a(href='/games/edit/' + game._id)
+					| #{game.awayTeam.team.mascot} vs. #{game.homeTeam.team.mascot}
+					|
+					+formatLine(game.line)
