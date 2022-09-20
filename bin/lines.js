@@ -23,6 +23,7 @@ var teamNameToAbbreviation = {
 	CHARGERS: 'LAC',
 	CHIEFS: 'KC',
 	COLTS: 'IND',
+	COMMANDERS: 'WAS',
 	COWBOYS: 'DAL',
 	DOLPHINS: 'MIA',
 	EAGLES: 'PHI',
@@ -42,8 +43,7 @@ var teamNameToAbbreviation = {
 	STEELERS: 'PIT',
 	TEXANS: 'HOU',
 	TITANS: 'TEN',
-	VIKINGS: 'MIN',
-	WASHINGTON: 'WAS'
+	VIKINGS: 'MIN'
 };
 
 var gamePromises = [];
