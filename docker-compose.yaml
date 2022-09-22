@@ -1,0 +1,38 @@
+version: '3.6'
+
+services:
+    web:
+        container_name: subcontest-web
+        image: node:14-alpine
+        volumes:
+            - .:/app
+            - ../ssl:/ssl
+        working_dir: /app
+        ports:
+            - 7811:7811
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.subcontest.rule=Host(`subcontest.coinflipper.local`)"
+        command: node index.js
+
+    mongo:
+        container_name: subcontest-mongo
+        image: mongo:3.6.8
+        volumes:
+            - subcontest-data:/data/db
+
+    cron:
+        container_name: subcontest-cron
+        image: node:14-alpine
+        volumes:
+            - .:/app
+        command: sh -c "crontab /app/etc/crontab && crond -f"
+
+volumes:
+    subcontest-data:
+        name: subcontest-data
+
+networks:
+    default:
+        name: coinflipper
+        external: true
