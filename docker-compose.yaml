@@ -9,7 +9,7 @@ services:
             - ../ssl:/ssl
         working_dir: /app
         ports:
-            - 7811:7811
+            - $PORT:$PORT
         labels:
             - "traefik.enable=true"
             - "traefik.http.routers.subcontest.rule=Host(`subcontest.coinflipper.local`)"
