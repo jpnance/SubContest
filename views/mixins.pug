@@ -155,13 +155,14 @@ mixin teamRow(game, side, classes)
 	li.team-row.list-group-item.py-1(id='team-row-' + game[side].abbreviation class=classes.background)
 		div.row
 			div.col-8.offset-1.col-sm-8.offset-sm-1.col-md-8.p-0
-					h5.mb-0.text-nowrap
+					div.d-flex.align-items-center
 						img(src='/images/' + game[side].abbreviation.toLowerCase() + '.png')
-						|
-						| #{game[side].team.mascot}
-						if side == 'homeTeam'
-							span.line.ml-1.text-nowrap
-								+formatLine(game.line)
+						h5.mb-0.ml-2.text-nowrap
+							|
+							| #{game[side].team.mascot}
+							if side == 'homeTeam'
+								span.line.ml-1.text-nowrap
+									+formatLine(game.line)
 
 			h5.col-2.text-center.text-nowrap.font-weight-normal.p-0.mb-0(class=classes.scoreText)
 				if game.hasPotentiallyStarted()
