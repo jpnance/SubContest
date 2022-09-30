@@ -17,6 +17,11 @@ var gameSchema = new Schema({
 	},
 	kickoff: { type: Date },
 	week: { type: Number, required: true },
+	status: {
+		code: { type: String, required: true },
+		quarter: { type: Number },
+		clock: { type: String }
+	},
 	line: { type: Number },
 	picks: { type: Object, default: {} },
 	winner: { type: String, ref: 'Team' },
@@ -45,6 +50,10 @@ gameSchema.methods.isPastStartTime = function() {
 	return this.kickoff && Date.now() >= this.kickoff;
 };
 
+gameSchema.methods.hasDefinitelyStarted = function() {
+	return this.status.code == 'STATUS_IN_PROGRESS';
+};
+
 gameSchema.methods.hasPotentiallyStarted = function() {
 	return this.isPastStartTime();
 };
@@ -56,8 +65,12 @@ gameSchema.methods.isCool = function(hours) {
 	return Date.now() >= later;
 };
 
+gameSchema.methods.isAtHalftime = function() {
+	return this.status.code == 'STATUS_HALFTIME';
+};
+
 gameSchema.methods.isFinal = function() {
-	return this.awayTeam.score != null && this.homeTeam.score != null;
+	return this.status.code == 'STATUS_FINAL' && this.awayTeam.score != null && this.homeTeam.score != null;
 };
 
 gameSchema.methods.isFinalAndCool = function() {
