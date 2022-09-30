@@ -122,11 +122,18 @@ mixin gameCard(game, showDate)
 				div.row.justify-content-center
 					div.col-10.col-sm-12.col-md-12.text-center
 						span(class=classes.header.linkText)
-							if !game.hasPotentiallyStarted()
+							if game.hasDefinitelyStarted()
+								+numberToQuarter(game.status.quarter)
+								|
+								|
+								| - #{game.status.clock}
+							else if !game.hasPotentiallyStarted()
 								if game.hasStartTime()
 									| #{dateFormat(game.kickoff, 'dddd "at" h:MMtt')} ET
 								else
 									| TBD
+							else if game.isAtHalftime()
+								| Halftime
 							else if game.isFinal()
 								| Final
 							else if !game.hasStartTime()
@@ -195,3 +202,15 @@ mixin numberToWord(number)
 		| six
 	else if number == 7
 		| seven
+
+mixin numberToQuarter(number)
+	if number == 1
+		| 1st Quarter
+	else if number == 2
+		| 2nd Quarter
+	else if number == 3
+		| 3rd Quarter
+	else if number == 4
+		| 4th Quarter
+	else if number == 5
+		| Overtime
