@@ -132,6 +132,11 @@ mixin gameCard(game, showDate)
 									| #{dateFormat(game.kickoff, 'dddd "at" h:MMtt')} ET
 								else
 									| TBD
+							else if game.isAtEndOfQuarter()
+								| End of
+								|
+								|
+								+numberToQuarter(game.status.quarter)
 							else if game.isAtHalftime()
 								| Halftime
 							else if game.isFinal()

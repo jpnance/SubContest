@@ -65,6 +65,10 @@ gameSchema.methods.isCool = function(hours) {
 	return Date.now() >= later;
 };
 
+gameSchema.methods.isAtEndOfQuarter = function() {
+	return this.status.code == 'STATUS_END_PERIOD';
+};
+
 gameSchema.methods.isAtHalftime = function() {
 	return this.status.code == 'STATUS_HALFTIME';
 };
