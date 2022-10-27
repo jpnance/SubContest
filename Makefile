@@ -2,7 +2,7 @@ ci:
 	docker run --rm -v $(PWD):/app node:14-alpine sh -c "cd /app && npm ci"
 
 lines:
-	docker exec subcontest-cron sh -c "node /app/bin/lines.js update"
+	docker exec -it subcontest-cron sh -c "node /app/bin/lines.js update"
 
 seed:
 	@echo "Use something like:"
