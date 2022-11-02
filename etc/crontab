@@ -1,2 +1,2 @@
-5 0-2 * * 4	/usr/local/bin/node /app/bin/lines.js update
+*/5 0-2 * * 4	/usr/local/bin/node /app/bin/lines.js update
 */1 * * * *	/usr/local/bin/node /app/bin/scores.js update
