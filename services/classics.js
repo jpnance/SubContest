@@ -61,6 +61,9 @@ module.exports.showStandings = function(request, response) {
 									weekPick.result = 'push';
 								}
 							}
+							else if (game.isCanceled()) {
+								weekPick.result = 'loss';
+							}
 
 							standingsMap[username].weekPicks.push(weekPick);
 						}
