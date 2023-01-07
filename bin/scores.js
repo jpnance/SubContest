@@ -14,7 +14,7 @@ var teamAbbreviationOverrides = {
 var gamePromises = [];
 
 var scoringStatuses = ['STATUS_IN_PROGRESS', 'STATUS_END_PERIOD', 'STATUS_HALFTIME', 'STATUS_FINAL'];
-var unsetClockStatues = ['STATUS_HALFTIME', 'STATUS_FINAL'];
+var unsetClockStatuses = ['STATUS_HALFTIME', 'STATUS_FINAL'];
 
 request.get('https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard', function(error, response) {
 	if (error) {
@@ -73,7 +73,7 @@ request.get('https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboa
 			updates['$set']['awayTeam.score'] = (awayTeam.id == team0.id) ? score0 : score1;
 			updates['$set']['homeTeam.score'] = (homeTeam.id == team0.id) ? score0 : score1;
 
-			if (unsetClockStatues.includes(competition.status.type.name)) {
+			if (unsetClockStatuses.includes(competition.status.type.name)) {
 				updates['$unset'] = {
 					'status.quarter': true,
 					'status.clock': true
