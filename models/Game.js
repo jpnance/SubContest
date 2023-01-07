@@ -73,6 +73,10 @@ gameSchema.methods.isAtHalftime = function() {
 	return this.status.code == 'STATUS_HALFTIME';
 };
 
+gameSchema.methods.isCanceled = function() {
+	return this.status.code == 'STATUS_CANCELED';
+};
+
 gameSchema.methods.isFinal = function() {
 	return this.status.code == 'STATUS_FINAL' && this.awayTeam.score != null && this.homeTeam.score != null;
 };

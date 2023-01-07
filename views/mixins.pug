@@ -76,7 +76,7 @@ mixin gameCard(game, showDate)
 			}
 		}
 
-		if (game.hasPotentiallyStarted() && !game.isFinal()) {
+		if (game.hasPotentiallyStarted() && !game.isFinal() && !game.isCanceled()) {
 			classes.header.background.push('bg-primary');
 			classes.header.linkText.push('text-white');
 			classes.away.picksText.push('text-dark');
@@ -113,6 +113,15 @@ mixin gameCard(game, showDate)
 				classes.away.picksText.push('text-secondary');
 			}
 		}
+		else if (game.isCanceled()) {
+			if (game.sessionPick) {
+				classes.header.linkText.push('text-white');
+				classes.header.background.push('bg-danger');
+			}
+
+			classes.away.picksText.push('text-danger');
+			classes.home.picksText.push('text-danger');
+		}
 
 	div.col-xs-12.col-sm-10.offset-sm-1.col-md-6.offset-md-0.col-lg-4.mb-4(id='game-' + game._id)
 		if showDate
@@ -141,6 +150,8 @@ mixin gameCard(game, showDate)
 								| Halftime
 							else if game.isFinal()
 								| Final
+							else if game.isCanceled()
+								| Canceled
 							else if !game.hasStartTime()
 								| TBD
 							else

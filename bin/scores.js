@@ -14,7 +14,7 @@ var teamAbbreviationOverrides = {
 var gamePromises = [];
 
 var scoringStatuses = ['STATUS_IN_PROGRESS', 'STATUS_END_PERIOD', 'STATUS_HALFTIME', 'STATUS_FINAL'];
-var unsetClockStatuses = ['STATUS_HALFTIME', 'STATUS_FINAL'];
+var unsetClockStatuses = ['STATUS_HALFTIME', 'STATUS_FINAL', 'STATUS_CANCELED'];
 
 request.get('https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard', function(error, response) {
 	if (error) {
@@ -63,7 +63,8 @@ request.get('https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboa
 			'$set': {
 				kickoff: new Date(startDate),
 				'status.code': competition.status.type.name
-			}
+			},
+			'$unset': {}
 		};
 
 		if (scoringStatuses.includes(competition.status.type.name)) {
@@ -72,17 +73,19 @@ request.get('https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboa
 
 			updates['$set']['awayTeam.score'] = (awayTeam.id == team0.id) ? score0 : score1;
 			updates['$set']['homeTeam.score'] = (homeTeam.id == team0.id) ? score0 : score1;
+		}
+		else {
+			updates['$unset']['awayTeam.score'] = true;
+			updates['$unset']['homeTeam.score'] = true;
+		}
 
-			if (unsetClockStatuses.includes(competition.status.type.name)) {
-				updates['$unset'] = {
-					'status.quarter': true,
-					'status.clock': true
-				};
-			}
-			else {
-				updates['$set']['status.quarter'] = competition.status.period;
-				updates['$set']['status.clock'] = competition.status.displayClock;
-			}
+		if (unsetClockStatuses.includes(competition.status.type.name)) {
+			updates['$unset']['status.quarter'] = true;
+			updates['$unset']['status.clock'] = true;
+		}
+		else {
+			updates['$set']['status.quarter'] = competition.status.period;
+			updates['$set']['status.clock'] = competition.status.displayClock;
 		}
 
 		console.log(conditions, updates);
