@@ -85,6 +85,10 @@ gameSchema.methods.isFinalAndCool = function() {
 	return this.isFinal() && this.isCool();
 };
 
+gameSchema.methods.isOver = function() {
+	return this.isFinal() || this.isCanceled();
+};
+
 gameSchema.methods.syncWithApi = function() {
 	var thisGame = this;
 
@@ -221,10 +225,10 @@ gameSchema.methods.syncWithApi = function() {
 };
 
 gameSchema.statics.progressSortWithPopulatedTeams = function(a, b) {
-	if (a.isFinal() && !b.isFinal()) {
+	if (a.isOver() && !b.isOver()) {
 		return 1;
 	}
-	else if (!a.isFinal() && b.isFinal()) {
+	else if (!a.isOver() && b.isOver()) {
 		return -1;
 	}
 	else {
