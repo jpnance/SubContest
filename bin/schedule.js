@@ -59,7 +59,8 @@ for (var week = 1; week <= 18; week++) {
 
 					var updates = {
 						'$set': {
-							kickoff: new Date(startDate)
+							kickoff: new Date(startDate),
+							'status.code': competition.status.type.name
 						}
 					};
 
