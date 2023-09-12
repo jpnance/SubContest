@@ -169,6 +169,8 @@ module.exports.pick = function(request, response) {
 						gameId: game._id,
 						teamId: game.picks[session.username]
 					});
+				}).catch(function (error) {
+					response.status(500).send({ message: 'Unknown server error', error: error });
 				});
 			});
 		});
