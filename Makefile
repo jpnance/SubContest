@@ -12,4 +12,4 @@ scores:
 
 seed:
 	@echo "Use something like:"
-	@echo "docker exec -i subcontest-mongo sh -c \"mongorestore --drop --archive\" < ~/backups/subcontest/subcontest.dump"
+	@echo "docker exec -i subcontest-mongo sh -c \"mongorestore --drop --archive\" < ~/backups/subcontest.dump"
