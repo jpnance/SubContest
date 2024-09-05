@@ -48,7 +48,7 @@ var teamNameToAbbreviation = {
 
 var gamePromises = [];
 
-request.get('https://wfd.rarii.com/westgate/', function(error, response) {
+request.get('https://pny.funcli.com/westgate/', function(error, response) {
 	if (error) {
 		console.log(error);
 		process.exit();
