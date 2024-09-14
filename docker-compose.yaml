@@ -10,9 +10,6 @@ services:
         working_dir: /app
         ports:
             - $PORT:$PORT
-        labels:
-            - "traefik.enable=true"
-            - "traefik.http.routers.subcontest.rule=Host(`subcontest.coinflipper.local`)"
         command: node index.js
 
     mongo:
