@@ -29,7 +29,7 @@ module.exports = function(app) {
 	app.get('/schedule.json', schedule.allForDate);
 	app.get('/schedule/:week(\\d\\d?)', schedule.showAllForDate);
 
-	app.get('/games', games.showAll);
+	app.get('/games', games.showAllForDate);
 	app.get('/games/:week(\\d\\d?)', games.showAllForDate);
 	app.get('/games/edit/:gameId', games.edit);
 	app.post('/games/edit/:gameId', games.update);

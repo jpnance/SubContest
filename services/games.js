@@ -42,7 +42,7 @@ module.exports.showAllForDate = function(request, response) {
 		var week = request.params.week;
 
 		if (!week) {
-			Game.getWeek();
+			week = Game.getWeek();
 		}
 
 		week = Game.cleanWeek(week);
