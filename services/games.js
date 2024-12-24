@@ -36,7 +36,7 @@ module.exports.showAllForDate = function(request, response) {
 
 		if (session && session.user.admin) {
 			Game.find({ season: process.env.SEASON, week: week }).populate('awayTeam.team homeTeam.team').sort('kickoff awayTeam.abbreviation').then(function(games) {
-				response.render('games', { games: games, session: session });
+				response.render('games', { week: week, games: games, session: session });
 			});
 		}
 		else {
