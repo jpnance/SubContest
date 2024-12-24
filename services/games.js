@@ -24,19 +24,6 @@ module.exports.edit = function(request, response) {
 	});
 };
 
-module.exports.showAll = function(request, response) {
-	Session.withActiveSession(request, function(error, session) {
-		if (session && session.user.admin) {
-			Game.find({ season: process.env.SEASON, week: Game.getWeek(Date.now()) }).populate('awayTeam.team homeTeam.team').sort('kickoff awayTeam.abbreviation').then(function(games) {
-				response.render('games', { games: games, session: session });
-			});
-		}
-		else {
-			response.redirect('/');
-		}
-	});
-};
-
 module.exports.showAllForDate = function(request, response) {
 	Session.withActiveSession(request, function(error, session) {
 		var week = request.params.week;
