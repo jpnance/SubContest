@@ -37,6 +37,27 @@ module.exports.showAll = function(request, response) {
 	});
 };
 
+module.exports.showAllForDate = function(request, response) {
+	Session.withActiveSession(request, function(error, session) {
+		var week = request.params.week;
+
+		if (!week) {
+			Game.getWeek();
+		}
+
+		week = Game.cleanWeek(week);
+
+		if (session && session.user.admin) {
+			Game.find({ season: process.env.SEASON, week: week }).populate('awayTeam.team homeTeam.team').sort('kickoff awayTeam.abbreviation').then(function(games) {
+				response.render('games', { games: games, session: session });
+			});
+		}
+		else {
+			response.redirect('/');
+		}
+	});
+};
+
 module.exports.update = function(request, response) {
 	Session.withActiveSession(request, function(error, session) {
 		if (!session || !session.user.admin) {
@@ -60,7 +81,7 @@ module.exports.update = function(request, response) {
 					response.send(error);
 				}
 				else {
-					response.redirect('/games');
+					response.redirect(`/games/${game.week}`);
 				}
 			});
 		});
