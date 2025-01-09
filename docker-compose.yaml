@@ -3,6 +3,9 @@ version: '3.6'
 services:
     web:
         container_name: subcontest-web
+        profiles:
+            - main
+            - postseason
         image: node:14-alpine
         volumes:
             - .:/app
@@ -14,12 +17,17 @@ services:
 
     mongo:
         container_name: subcontest-mongo
+        profiles:
+            - main
+            - postseason
         image: mongo:3.6.8
         volumes:
             - subcontest-data:/data/db
 
     cron:
         container_name: subcontest-cron
+        profiles:
+            - main
         image: node:14-alpine
         volumes:
             - .:/app
