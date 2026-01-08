@@ -5,9 +5,11 @@ var Team = require('../models/Team');
 
 module.exports.showStandings = function(request, response) {
 	Session.withActiveSession(request, function(error, session) {
+		var season = request.params.season || process.env.SEASON;
+
 		var dataPromises = [
-			User.find({ seasons: process.env.SEASON }),
-			Game.find({ season: process.env.SEASON }).sort({ kickoff: 1 })
+			User.find({ seasons: season }),
+			Game.find({ season: season }).sort({ kickoff: 1 })
 		];
 
 		Promise.all(dataPromises).then(function(values) {

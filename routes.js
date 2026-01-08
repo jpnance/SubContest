@@ -37,6 +37,7 @@ module.exports = function(app) {
 	app.get('/pick/:teamId/:gameId', classics.pick);
 	app.get('/unpick/:teamId/:gameId', classics.unpick);
 	app.get('/standings', classics.showStandings);
+	app.get('/standings/:season(\\d{4})', classics.showStandings);
 
 	app.get('/teams', teams.showAll);
 
