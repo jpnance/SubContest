@@ -1,6 +1,9 @@
 #!/bin/bash
 
 if [ -z "$1" ]; then
+	echo "Usage: runt seed --prod"
+	echo "       runt seed <path-to-dump-file>"
+elif [ "$1" == "--prod" ]; then
 	echo "Fetching latest dump from production..."
 	ssh coinflipper.org cat "~/backups/subcontest/subcontest.dump" | \
 		docker exec -i subcontest-mongo mongorestore --drop --archive
