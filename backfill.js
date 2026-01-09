@@ -3,7 +3,7 @@ const dotenv = require('dotenv').config({ path: '/app/.env' });
 const mongoose = require('mongoose');
 const mongoUri = process.env.MONGODB_URI || null;
 
-mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
+mongoose.connect(mongoUri);
 
 const User = require('./models/User');
 const Game = require('./models/Game');

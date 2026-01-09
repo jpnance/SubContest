@@ -5,7 +5,7 @@ var request = require('superagent');
 var Game = require('../models/Game');
 
 var mongoose = require('mongoose');
-mongoose.connect(process.env.MONGODB_URI, { useUnifiedTopology: true, useNewUrlParser: true });
+mongoose.connect(process.env.MONGODB_URI);
 
 var teamAbbreviationOverrides = {
 	WSH: 'WAS'

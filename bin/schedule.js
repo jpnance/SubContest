@@ -5,7 +5,7 @@ var request = require('superagent');
 var Game = require('../models/Game');
 
 var mongoose = require('mongoose');
-mongoose.connect(process.env.MONGODB_URI, { useUnifiedTopology: true, useNewUrlParser: true });
+mongoose.connect(process.env.MONGODB_URI);
 
 var teamAbbreviationOverrides = {
 	WSH: 'WAS'
@@ -67,7 +67,7 @@ for (var week = 1; week <= 18; week++) {
 					console.log(conditions, updates);
 
 					if (process.argv.includes('update')) {
-						gamePromises.push(Game.findOneAndUpdate(conditions, updates, { returnOriginal: false, useFindAndModify: false, upsert: true }));
+						gamePromises.push(Game.findOneAndUpdate(conditions, updates, { returnDocument: 'after', upsert: true }));
 					}
 				});
 			})

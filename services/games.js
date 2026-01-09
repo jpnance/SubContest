@@ -5,17 +5,15 @@ var Game = require('../models/Game');
 module.exports.edit = function(request, response) {
 	Session.withActiveSession(request, function(error, session) {
 		if (session && (request.params.username == session.user.username || session.user.admin)) {
-			Game.findOne({ _id: request.params.gameId }).populate('awayTeam.team homeTeam.team').exec(function(error, game) {
+			Game.findOne({ _id: request.params.gameId }).populate('awayTeam.team homeTeam.team').then(function(game) {
 				var responseData = {
 					game: game,
 					session: session
 				};
 
-				if (error) {
-					response.send(error);
-				}
-
 				response.render('games/edit', responseData);
+			}).catch(function(error) {
+				response.send(error);
 			});
 		}
 		else {
@@ -63,13 +61,10 @@ module.exports.update = function(request, response) {
 				game.line = parseFloat(request.body.line).toFixed(1);
 			}
 
-			game.save(function(error) {
-				if (error) {
-					response.send(error);
-				}
-				else {
-					response.redirect(`/games/${game.week}`);
-				}
+			game.save().then(function() {
+				response.redirect(`/games/${game.week}`);
+			}).catch(function(error) {
+				response.send(error);
 			});
 		});
 	});

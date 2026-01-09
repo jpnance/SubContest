@@ -5,7 +5,7 @@ var request = require('superagent');
 var Game = require('../models/Game');
 
 var mongoose = require('mongoose');
-mongoose.connect(process.env.MONGODB_URI, { useUnifiedTopology: true, useNewUrlParser: true });
+mongoose.connect(process.env.MONGODB_URI);
 
 var teamAbbreviationOverrides = {
 	WSH: 'WAS'
@@ -91,7 +91,7 @@ request.get('https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboa
 		console.log(conditions, updates);
 
 		if (process.argv.includes('update')) {
-			gamePromises.push(Game.findOneAndUpdate(conditions, updates, { returnOriginal: false, useFindAndModify: false }));
+			gamePromises.push(Game.findOneAndUpdate(conditions, updates, { returnDocument: 'after' }));
 		}
 	});
 
