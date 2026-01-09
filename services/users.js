@@ -1,10 +1,7 @@
-var crypto = require('crypto');
-
-var Session = require('../models/Session');
 var User = require('../models/User');
 
 module.exports.loginPrompt = function(request, response) {
-	var responseData = {};
+	var responseData = { session: request.session };
 
 	if (request.query.error == 'invalid-email') {
 		responseData.error = { message: 'Invalid email address.' };
@@ -23,134 +20,67 @@ module.exports.loginPrompt = function(request, response) {
 };
 
 module.exports.add = function(request, response) {
-	Session.withActiveSession(request, function(error, session) {
-		if (session && session.user.admin) {
-			response.render('users/add', { session: session });
-		}
-		else {
-			response.redirect('/');
-		}
-	});
+	response.render('users/add', { session: request.session });
 };
 
 module.exports.edit = function(request, response) {
-	Session.withActiveSession(request, function(error, session) {
-		if (session && (request.params.username == session.user.username || session.user.admin)) {
-			User.findOne({ username: request.params.username }).then(function(user) {
-				var responseData = {
-					user: user,
-					session: session
-				};
-
-				response.render('users/edit', responseData);
-			}).catch(function(error) {
-				response.send(error);
-			});
-		}
-		else {
-			response.redirect('/');
-		}
+	User.findOne({ username: request.params.username }).then(function(user) {
+		response.render('users/edit', { user: user, session: request.session });
+	}).catch(function(error) {
+		response.send(error);
 	});
 };
 
 module.exports.showAll = function(request, response) {
-	Session.withActiveSession(request, function(error, session) {
-		if (session && session.user.admin) {
-			User.find({}).sort({ username: 1 }).then(function(users) {
-				response.render('users', { users: users, session: session });
-			});
-		}
-		else {
-			response.redirect('/');
-		}
+	User.find({}).sort({ username: 1 }).then(function(users) {
+		response.render('users', { users: users, session: request.session });
 	});
 };
 
 module.exports.signUp = function(request, response) {
-	Session.withActiveSession(request, function(error, session) {
-		if (session && session.user.admin) {
-			if (!request.body.username) {
-				response.status(400).send('No username supplied');
-			}
-			else {
-				var user = new User({
-					username: request.body.username,
-					firstName: request.body.firstName,
-					lastName: request.body.lastName,
-					displayName: request.body.displayName ? request.body.displayName : request.body.firstName
-				});
+	if (!request.body.username) {
+		response.status(400).send('No username supplied');
+		return;
+	}
 
-				if (request.body.eligible == 'on') {
-					user.makeEligibleFor(process.env.SEASON);
-				}
-				else {
-					user.makeUneligibleFor(process.env.SEASON);
-				}
+	var user = new User({
+		username: request.body.username,
+		firstName: request.body.firstName,
+		lastName: request.body.lastName,
+		displayName: request.body.displayName ? request.body.displayName : request.body.firstName
+	});
 
-				user.save().then(function() {
-					response.redirect('/');
-				}).catch(function(error) {
-					response.status(400).send(error);
-				});
-			}
-		}
-		else {
-			response.redirect('/');
-		}
+	if (request.body.eligible == 'on') {
+		user.makeEligibleFor(process.env.SEASON);
+	}
+	else {
+		user.makeUneligibleFor(process.env.SEASON);
+	}
+
+	user.save().then(function() {
+		response.redirect('/');
+	}).catch(function(error) {
+		response.status(400).send(error);
 	});
 };
 
 module.exports.update = function(request, response) {
-	Session.withActiveSession(request, function(error, session) {
-		if (!session || (session.user.username != request.params.username && !session.user.admin)) {
-			response.redirect('/');
-			return;
+	User.findOne({ username: request.params.username }).then(function(user) {
+		user.firstName = request.body.firstName;
+		user.lastName = request.body.lastName;
+		user.displayName = request.body.displayName;
+
+		if (request.body.eligible == 'on') {
+			user.makeEligibleFor(process.env.SEASON);
+		}
+		else {
+			user.makeUneligibleFor(process.env.SEASON);
 		}
 
-		var data = [
-			User.findOne({ username: request.params.username })
-		];
-
-		Promise.all(data).then(function(values) {
-			var user = values[0];
-
-			if (session.user.admin) {
-				user.firstName = request.body.firstName;
-				user.lastName = request.body.lastName;
-				user.displayName = request.body.displayName;
-
-				if (request.body.eligible == 'on') {
-					user.makeEligibleFor(process.env.SEASON);
-				}
-				else {
-					user.makeUneligibleFor(process.env.SEASON);
-				}
-			}
-
-			user.save().then(function() {
-				response.redirect('/users');
-			}).catch(function(error) {
-				response.send(error);
-			});
+		user.save().then(function() {
+			response.redirect('/users');
+		}).catch(function(error) {
+			response.send(error);
 		});
-	});
-};
-
-module.exports.all = function(request, response) {
-	if (!request.query || !request.query.apiKey || request.query.apiKey != process.env.API_KEY) {
-		response.sendStatus(401);
-		return;
-	}
-
-	var season = parseInt(request.query.season) || process.env.SEASON;
-
-	var dataPromises = [
-		User.find({ seasons: season }).select('-admin')
-	];
-
-	Promise.all(dataPromises).then(function(values) {
-		var users = values[0];
-
-		response.json(users);
 	});
 };

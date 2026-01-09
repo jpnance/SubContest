@@ -1,5 +1,4 @@
 var User = require('../models/User');
-var Session = require('../models/Session');
 var Game = require('../models/Game');
 var Team = require('../models/Team');
 
@@ -18,65 +17,64 @@ module.exports.showAll = function(request, response) {
 };
 
 module.exports.showAllForDate = function(request, response) {
-	Session.withActiveSession(request, function(error, session) {
-		var week = request.params.week;
+	var session = request.session;
+	var week = request.params.week;
 
-		if (!week) {
-			week = Game.getWeek();
-		}
+	if (!week) {
+		week = Game.getWeek();
+	}
 
-		week = Game.cleanWeek(week);
+	week = Game.cleanWeek(week);
 
-		var data = [
-			Game.find({ season: process.env.SEASON, week: week }).sort('startTime awayTeam.abbreviation').populate('awayTeam.team homeTeam.team'),
-			User.find({ seasons: process.env.SEASON })
-		];
+	var data = [
+		Game.find({ season: process.env.SEASON, week: week }).sort('startTime awayTeam.abbreviation').populate('awayTeam.team homeTeam.team'),
+		User.find({ seasons: process.env.SEASON })
+	];
 
-		Promise.all(data).then(function(values) {
-			var games = values[0];
-			var users = values[1];
+	Promise.all(data).then(function(values) {
+		var games = values[0];
+		var users = values[1];
 
-			var usersMap = {};
+		var usersMap = {};
 
-			users.forEach(user => {
-				usersMap[user.username] = user.displayName;
-			});
+		users.forEach(user => {
+			usersMap[user.username] = user.displayName;
+		});
 
-			games.forEach(function(game) {
-				game.awayTeam.picks = [];
-				game.homeTeam.picks = [];
+		games.forEach(function(game) {
+			game.awayTeam.picks = [];
+			game.homeTeam.picks = [];
 
-				if (!game.picks) {
-					return;
+			if (!game.picks) {
+				return;
+			}
+
+			Object.keys(game.picks).forEach(key => {
+				if (game.picks[key] == game.awayTeam.abbreviation) {
+					game.awayTeam.picks.push(usersMap[key]);
+				}
+				else if (game.picks[key] == game.homeTeam.abbreviation) {
+					game.homeTeam.picks.push(usersMap[key]);
 				}
 
-				Object.keys(game.picks).forEach(key => {
-					if (game.picks[key] == game.awayTeam.abbreviation) {
-						game.awayTeam.picks.push(usersMap[key]);
-					}
-					else if (game.picks[key] == game.homeTeam.abbreviation) {
-						game.homeTeam.picks.push(usersMap[key]);
-					}
-
-					if (session && key == session.username) {
-						game.sessionPick = game.picks[key];
-					}
-				});
-
-				game.awayTeam.picks.sort();
-				game.homeTeam.picks.sort();
+				if (session && key == session.username) {
+					game.sessionPick = game.picks[key];
+				}
 			});
 
-			games.sort(Game.progressSortWithPopulatedTeams);
-
-			var responseData = {
-				session: session,
-				games: games,
-				week: week
-			};
-
-			response.render('schedule/all', responseData);
+			game.awayTeam.picks.sort();
+			game.homeTeam.picks.sort();
 		});
+
+		games.sort(Game.progressSortWithPopulatedTeams);
+
+		var responseData = {
+			session: session,
+			games: games,
+			week: week
+		};
+
+		response.render('schedule/all', responseData);
 	});
 };
 
