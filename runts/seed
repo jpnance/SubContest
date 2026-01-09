@@ -1,9 +1,10 @@
 #!/bin/bash
 
 if [ -z "$1" ]; then
-	echo "Usage: runt seed <path-to-dump>"
-	echo "Example: runt seed ~/backups/subcontest.dump"
-	exit 1
+	echo "Fetching latest dump from production..."
+	ssh coinflipper.org cat "~/backups/subcontest/subcontest.dump" | \
+		docker exec -i subcontest-mongo mongorestore --drop --archive
+else
+	echo "Restoring from $1..."
+	docker exec -i subcontest-mongo mongorestore --drop --archive < "$1"
 fi
-
-docker exec -i subcontest-mongo mongorestore --drop --archive < "$1"
