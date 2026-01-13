@@ -1,0 +1,58 @@
+SubContest Logo Colors
+======================
+
+Primary Theme: Cowboys
+----------------------
+Left segment:   #004488 (Navy Blue)
+Right segment:  #A5ACAF (Silver)
+Hand/coin:      #FFFFFF (White)
+
+File: logo-subcontest-cowboys.png
+
+
+Alternative Options
+-------------------
+
+Chargers
+  Left segment:   #0080C6 (Powder Blue)
+  Right segment:  #FFC20E (Gold)
+  Hand/coin:      #FFFFFF (White)
+  File: logo-subcontest-chargers.png
+
+Option 1: Purple & Gold
+  Left segment:   #4B0082 (Indigo)
+  Right segment:  #FFD700 (Gold)
+  Hand/coin:      #FFFFFF (White)
+  File: logo-subcontest-1.png
+
+Option 2: Teal & Orange
+  Left segment:   #008080 (Teal)
+  Right segment:  #FF6347 (Tomato)
+  Hand/coin:      #FFFFFF (White)
+  File: logo-subcontest-2.png
+
+Option 3: Crimson & Navy
+  Left segment:   #8B0000 (Dark Red)
+  Right segment:  #000080 (Navy)
+  Hand/coin:      #FFFFFF (White)
+  File: logo-subcontest-3.png
+
+Option 4: Black & Gold
+  Left segment:   #1A1A1A (Black)
+  Right segment:  #CFB53B (Old Gold)
+  Hand/coin:      #FFFFFF (White)
+  File: logo-subcontest-4.png
+
+Option 5: Gridiron (Forest & Silver)
+  Left segment:   #013220 (Dark Green)
+  Right segment:  #A8A9AD (Silver)
+  Hand/coin:      #FFFFFF (White)
+  File: logo-subcontest-5.png
+
+
+Original Logo Reference
+-----------------------
+Left segment:   #26337A (Navy Blue)
+Right segment:  #FF0000 (Red)
+Hand/coin:      #FFFFFF (White)
+File: logo.png
