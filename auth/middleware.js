@@ -13,18 +13,16 @@ async function attachSession(req, res, next) {
 		return next();
 	}
 
-	try {
-		const response = await apiRequest
-			.post(process.env.LOGIN_SERVICE_INTERNAL + '/sessions/retrieve')
-			.send({ key: req.cookies.sessionKey });
+	const response = await apiRequest
+		.post(process.env.LOGIN_SERVICE_INTERNAL + '/sessions/retrieve')
+		.send({ key: req.cookies.sessionKey });
 
+	if (response.body?.user) {
 		const user = await User.findOne({ username: response.body.user.username });
 
 		if (user) {
 			req.session = { username: user.username, user: user };
 		}
-	} catch (error) {
-		// Invalid/expired session - just continue as logged out
 	}
 
 	next();
