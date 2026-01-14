@@ -38,7 +38,7 @@ $(document).ready(function() {
 				});
 			}
 		}).catch((error) => {
-			$('#modal .modal-body').text(error.responseJSON.message);
+			$('#modal .modal-body').html(error.responseJSON.message);
 			$('#modal').modal('show');
 		});
 

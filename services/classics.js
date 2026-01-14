@@ -109,6 +109,11 @@ module.exports.showStandings = function(request, response) {
 module.exports.pick = function(request, response) {
 	var session = request.session;
 
+	if (!session) {
+		response.status(401).send({ message: 'Your session has expired. Please <a href="/login">log in</a> again.' });
+		return;
+	}
+
 	if (!session.user.isEligibleFor(process.env.SEASON)) {
 		response.status(403).send({ message: 'You are not eligible for this season.' });
 		return;
@@ -159,6 +164,11 @@ module.exports.pick = function(request, response) {
 
 module.exports.unpick = function(request, response) {
 	var session = request.session;
+
+	if (!session) {
+		response.status(401).send({ message: 'Your session has expired. Please <a href="/login">log in</a> again.' });
+		return;
+	}
 
 	if (!session.user.isEligibleFor(process.env.SEASON)) {
 		response.status(403).send({ message: 'You are not eligible for this season.' });
