@@ -1,8 +1,8 @@
-version: '3.6'
-
 services:
   web:
     container_name: subcontest-web
+    depends_on:
+      - mongo
     profiles:
       - main
       - postseason
@@ -26,6 +26,8 @@ services:
 
   cron:
     container_name: subcontest-cron
+    depends_on:
+      - mongo
     profiles:
       - main
     image: node:22-alpine

@@ -1,3 +1,2 @@
 #!/bin/bash
-
-docker exec -it subcontest-cron node /app/bin/schedule.js update
+docker compose run --rm web node bin/schedule.js update
