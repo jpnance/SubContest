@@ -1,3 +1,4 @@
+slug: subcontest
 domain: subcontest.coinflipper.org
 port: 7811
 type: node
@@ -10,6 +11,9 @@ up_cmd: "docker compose up -d"
 
 # For backups (omit to skip backups)
 backup_cmd: "docker exec subcontest-mongo mongodump --archive --gzip > ~/backups/subcontest/subcontest.gz"
+
+# For metadata generation (used with monotonic alerting)
+mongo_container: subcontest-mongo
 
 # Mongo-specific: collections that should never shrink (for alerting)
 # Only relevant if backup_cmd does a mongodump
