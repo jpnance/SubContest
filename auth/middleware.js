@@ -13,16 +13,21 @@ async function attachSession(req, res, next) {
 		return next();
 	}
 
-	const response = await apiRequest
-		.post(process.env.LOGIN_SERVICE_INTERNAL + '/sessions/retrieve')
-		.send({ key: req.cookies.sessionKey });
+	try {
+		const response = await apiRequest
+			.post(process.env.LOGIN_SERVICE_INTERNAL + '/sessions/retrieve')
+			.send({ key: req.cookies.sessionKey });
 
-	if (response.body?.user) {
-		const user = await User.findOne({ username: response.body.user.username });
+		if (response.body?.user) {
+			const user = await User.findOne({ username: response.body.user.username });
 
-		if (user) {
-			req.session = { username: user.username, user: user };
+			if (user) {
+				req.session = { username: user.username, user: user };
+			}
 		}
+	} catch (err) {
+		// Log but don't crash - treat as unauthenticated
+		console.error('Auth service error:', err.message);
 	}
 
 	next();
