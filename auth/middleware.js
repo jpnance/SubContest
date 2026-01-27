@@ -41,12 +41,12 @@ async function attachSession(req, res, next) {
 }
 
 /**
- * Requires a logged-in user. Redirects to / if not.
+ * Requires a logged-in user. Redirects to /login if not.
  * Use on specific routes: app.get('/profile', requireLogin, handler)
  */
 function requireLogin(req, res, next) {
 	if (!req.session) {
-		return res.redirect('/');
+		return res.redirect('/login');
 	}
 	next();
 }
