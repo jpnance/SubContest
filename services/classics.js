@@ -4,7 +4,7 @@ var Team = require('../models/Team');
 
 module.exports.showStandings = function(request, response) {
 	var session = request.session;
-	var season = request.params.season || process.env.SEASON;
+	var season = parseInt(request.params.season, 10) || parseInt(process.env.SEASON, 10);
 
 	var dataPromises = [
 		User.find({ seasons: season }),

@@ -18,17 +18,17 @@ module.exports = function(app) {
 
 	app.get('/schedule', schedule.showAllForDate);
 	app.get('/schedule.json', schedule.allForDate);
-	app.get('/schedule/:week(\\d\\d?)', schedule.showAllForDate);
+	app.get('/schedule/:week', schedule.showAllForDate);
 
 	app.get('/games', requireAdmin, games.showAllForDate);
-	app.get('/games/:week(\\d\\d?)', requireAdmin, games.showAllForDate);
+	app.get('/games/:week', requireAdmin, games.showAllForDate);
 	app.get('/games/edit/:gameId', requireAdmin, games.edit);
 	app.post('/games/edit/:gameId', requireAdmin, games.update);
 
 	app.get('/pick/:teamId/:gameId', requireLogin, classics.pick);
 	app.get('/unpick/:teamId/:gameId', requireLogin, classics.unpick);
 	app.get('/standings', classics.showStandings);
-	app.get('/standings/:season(\\d{4})', classics.showStandings);
+	app.get('/standings/:season', classics.showStandings);
 
 	app.get('/rules', function(request, response) {
 		response.render('rules', { session: request.session });

@@ -145,7 +145,9 @@ gameSchema.statics.getWeek = function(date) {
 };
 
 gameSchema.statics.cleanWeek = function(week) {
-	if (week < 1) {
+	week = parseInt(week, 10);
+
+	if (isNaN(week) || week < 1) {
 		week = 1;
 	}
 	else if (week > 18) {
