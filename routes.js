@@ -16,7 +16,7 @@ module.exports = function(app) {
 	app.get('/users/edit/:username', requireAdmin, users.edit);
 	app.post('/users/edit/:username', requireAdmin, users.update);
 
-	app.get('/schedule/?', schedule.showAllForDate);
+	app.get('/schedule', schedule.showAllForDate);
 	app.get('/schedule.json', schedule.allForDate);
 	app.get('/schedule/:week(\\d\\d?)', schedule.showAllForDate);
 
