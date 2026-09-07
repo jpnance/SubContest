@@ -18,6 +18,7 @@ for (var week = 1; week <= 18; week++) {
 	weekPromises.push(
 		request
 			.get('https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard')
+			.set('User-Agent', 'node-superagent/1.0')
 			.query({ dates: process.env.SEASON, seasontype: 2, week: week })
 			.then(function(response) {
 				var scoreboardData = JSON.parse(response.text);

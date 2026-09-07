@@ -16,7 +16,7 @@ var gamePromises = [];
 var scoringStatuses = ['STATUS_IN_PROGRESS', 'STATUS_END_PERIOD', 'STATUS_HALFTIME', 'STATUS_FINAL'];
 var unsetClockStatuses = ['STATUS_HALFTIME', 'STATUS_FINAL', 'STATUS_CANCELED'];
 
-request.get('https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard', function(error, response) {
+request.get('https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard').set('User-Agent', 'node-superagent/1.0').end(function(error, response) {
 	if (error) {
 		console.log(error);
 		process.exit();
