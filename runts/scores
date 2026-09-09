@@ -1,2 +1,2 @@
 #!/bin/bash
-docker compose run --rm web node bin/scores.js
+docker compose run --rm web node bin/scores.js $*

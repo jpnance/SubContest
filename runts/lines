@@ -1,2 +1,2 @@
 #!/bin/bash
-docker compose run --rm web node bin/lines.js
+docker compose run --rm web node bin/lines.js $*
