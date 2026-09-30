@@ -19,12 +19,14 @@
   "dependencies": {
     "body-parser": "^2.3.0",
     "bootstrap": "^4.3.1",
+    "cheerio": "^1.2.0",
     "cookie-parser": "^1.4.3",
     "dateformat": "^3.0.3",
     "dotenv": "^6.2.0",
     "express": "^5.2.1",
     "jquery": "^3.4.0",
     "mongoose": "^8.24.1",
+    "pdf-parse": "^1.1.1",
     "popper.js": "^1.16.1",
     "pug": "^3.0.1",
     "superagent": "^10.1.1"
