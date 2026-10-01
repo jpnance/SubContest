@@ -291,6 +291,30 @@ function westgateMatchupKey(favoriteAbbrev, underdogAbbrev) {
 	return favoriteAbbrev + '-' + underdogAbbrev;
 }
 
+function westgateGameQuery(season, week, footballGame) {
+	return {
+		season: season,
+		week: week,
+
+		'$or': [
+			{
+				'$and': [
+					{ 'awayTeam.abbreviation': footballGame.favorite, 'homeTeam.abbreviation': footballGame.underdog }
+				]
+			},
+			{
+				'$and': [
+					{ 'awayTeam.abbreviation': footballGame.underdog, 'homeTeam.abbreviation': footballGame.favorite }
+				]
+			}
+		]
+	};
+}
+
+function gameHasLine(game) {
+	return game.line !== undefined && game.line !== null;
+}
+
 function buildConfidentWestgateGames(westgateData, problems) {
 	if (westgateData.data.length !== WESTGATE_GAMES_EXPECTED) {
 		problems.push(
@@ -438,27 +462,7 @@ fetchWestgateCard()
 		});
 
 		var gamePromises = confidentGames.map(function (footballGame) {
-			var conditions = {
-				season: season,
-				week: week,
-
-				'$or': [
-					{
-						'$and': [
-							{ 'awayTeam.abbreviation': footballGame.favorite, 'homeTeam.abbreviation': footballGame.underdog }
-						]
-					},
-					{
-						'$and': [
-							{ 'awayTeam.abbreviation': footballGame.underdog, 'homeTeam.abbreviation': footballGame.favorite }
-						]
-					}
-				],
-
-				line: { '$exists': false }
-			};
-
-			return Game.findOne(conditions).then(function (game) {
+			return Game.findOne(westgateGameQuery(season, week, footballGame)).then(function (game) {
 				return { game: game, footballGame: footballGame };
 			});
 		});
@@ -476,8 +480,12 @@ fetchWestgateCard()
 							season +
 							' week ' +
 							week +
-							' Game without line — fix schedule or abbreviations'
+							' Game in Mongo — fix schedule or abbreviations'
 					);
+					return;
+				}
+
+				if (gameHasLine(result.game)) {
 					return;
 				}
 
