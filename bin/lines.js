@@ -222,25 +222,6 @@ function westgateListGameSheetLinks(html) {
 		});
 }
 
-function westgatePickGameSheetLink(links, targetWeek) {
-	if (links.length === 0) {
-		return null;
-	}
-	var exact = links.find(function (link) {
-		return link.week === targetWeek;
-	});
-	if (exact) {
-		return exact;
-	}
-	var eligible = links.filter(function (link) {
-		return link.week <= targetWeek;
-	});
-	if (eligible.length > 0) {
-		return eligible[eligible.length - 1];
-	}
-	return links[links.length - 1];
-}
-
 function westgateDownloadPdf(url) {
 	return request.get(url).buffer(true).then(function (res) {
 		if (res.status !== 200) {
@@ -260,26 +241,23 @@ function westgateFetchPdf(targetWeek) {
 		})
 		.then(function (res) {
 			if (res.status === 200) {
-				return { buffer: res.body, url: pdfUrl, week: targetWeek };
+				return { published: true, buffer: res.body, url: pdfUrl, week: targetWeek };
 			}
 			return request.get(WESTGATE_CARD_URL).then(function (cardRes) {
 				var links = westgateListGameSheetLinks(cardRes.text);
-				var picked = westgatePickGameSheetLink(links, targetWeek);
+				var picked = links.find(function (link) {
+					return link.week === targetWeek;
+				});
 				if (!picked) {
-					throw new Error('No SuperContest game sheets found on Westgate card page');
+					return { published: false, week: targetWeek };
 				}
-				if (picked.week !== targetWeek) {
-					console.warn(
-						'Westgate week ' + targetWeek + ' PDF is not published yet; using week ' + picked.week
-					);
-				}
-				var canonicalUrl = westgatePdfUrlForWeek(picked.week);
+				var canonicalUrl = westgatePdfUrlForWeek(targetWeek);
 				return westgateDownloadPdf(canonicalUrl)
 					.catch(function () {
 						return westgateDownloadPdf(picked.href);
 					})
 					.then(function (buffer) {
-						return { buffer: buffer, url: canonicalUrl, week: picked.week };
+						return { published: true, buffer: buffer, url: canonicalUrl, week: targetWeek };
 					});
 			});
 		});
@@ -288,8 +266,16 @@ function westgateFetchPdf(targetWeek) {
 function fetchWestgateCard(date) {
 	var targetWeek = westgateWeek(date);
 	return westgateFetchPdf(targetWeek).then(function (pdfResult) {
+		if (!pdfResult.published) {
+			return {
+				notPublished: true,
+				targetWeek: targetWeek,
+				season: WESTGATE_SEASON
+			};
+		}
 		return westgateParseCardPdf(pdfResult.buffer).then(function (data) {
 			return {
+				notPublished: false,
 				data: data,
 				week: pdfResult.week,
 				season: WESTGATE_SEASON,
@@ -373,15 +359,7 @@ function sendLinesAlert(problems, context) {
 
 	var lines = [];
 	lines.push('SubContest lines — manual fix needed');
-	lines.push(
-		'Season ' +
-			context.season +
-			' · Westgate sheet week ' +
-			context.sheetWeek +
-			(context.calendarWeek !== context.sheetWeek
-				? ' (calendar week ' + context.calendarWeek + ' PDF not up yet)'
-				: '')
-	);
+	lines.push('Season ' + context.season + ' · Westgate sheet week ' + context.sheetWeek);
 
 	var appliedLabel = context.updateMode ? 'Wrote lines for' : 'Would write lines for';
 	lines.push(
@@ -421,10 +399,15 @@ function sendLinesAlert(problems, context) {
 	});
 }
 
-var calendarWeek = westgateWeek();
-
 fetchWestgateCard()
 	.then(function (westgateData) {
+		if (westgateData.notPublished) {
+			console.log(
+				'Westgate week ' + westgateData.targetWeek + ' PDF is not published yet; skipping (no alert).'
+			);
+			return false;
+		}
+
 		var season = westgateData.season;
 		var week = westgateData.week;
 		var problems = [];
@@ -544,7 +527,6 @@ fetchWestgateCard()
 					return sendLinesAlert(problems, {
 						season: season,
 						sheetWeek: week,
-						calendarWeek: calendarWeek,
 						url: westgateData.url,
 						confidentCount: confidentGames.length,
 						parsedCount: westgateData.data.length,
