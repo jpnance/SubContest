@@ -7,8 +7,6 @@ var cheerio = require('cheerio');
 var Game = require('../models/Game');
 var notifications = require('../helpers/notifications');
 
-var WESTGATE_GAMES_EXPECTED = 16;
-
 var mongoose = require('mongoose');
 mongoose.connect(process.env.MONGODB_URI);
 
@@ -315,14 +313,22 @@ function gameHasLine(game) {
 	return game.line !== undefined && game.line !== null;
 }
 
-function buildConfidentWestgateGames(westgateData, problems) {
-	if (westgateData.data.length !== WESTGATE_GAMES_EXPECTED) {
+function buildConfidentWestgateGames(westgateData, problems, scheduledGameCount) {
+	if (scheduledGameCount === 0) {
+		problems.push(
+			'No games in Mongo for season ' +
+				westgateData.season +
+				' week ' +
+				westgateData.week +
+				' — load the NFL schedule before comparing lines'
+		);
+	} else if (westgateData.data.length !== scheduledGameCount) {
 		problems.push(
 			'PDF parser got ' +
 				westgateData.data.length +
 				' games, expected ' +
-				WESTGATE_GAMES_EXPECTED +
-				' — open Sheet URL below and compare; pdf-parse layout may have changed'
+				scheduledGameCount +
+				' per Mongo schedule — open Sheet URL below and compare; pdf-parse layout may have changed or schedule may be off'
 		);
 	}
 
@@ -393,7 +399,7 @@ function sendLinesAlert(problems, context) {
 			' game(s) · ' +
 			context.confidentCount +
 			'/' +
-			WESTGATE_GAMES_EXPECTED +
+			context.scheduledGameCount +
 			' confident from PDF (' +
 			context.parsedCount +
 			' parsed)'
@@ -435,7 +441,9 @@ fetchWestgateCard()
 		var season = westgateData.season;
 		var week = westgateData.week;
 		var problems = [];
-		var confidentGames = buildConfidentWestgateGames(westgateData, problems);
+
+		return Game.countDocuments({ season: season, week: week }).then(function (scheduledGameCount) {
+		var confidentGames = buildConfidentWestgateGames(westgateData, problems, scheduledGameCount);
 		var lineLookup = {};
 
 		if (dryRun) {
@@ -538,6 +546,7 @@ fetchWestgateCard()
 						url: westgateData.url,
 						confidentCount: confidentGames.length,
 						parsedCount: westgateData.data.length,
+						scheduledGameCount: scheduledGameCount,
 						linesApplied: pendingMongoUpdates,
 						updateMode: !dryRun
 					}).then(function (hadProblems) {
@@ -545,6 +554,7 @@ fetchWestgateCard()
 					});
 				});
 			});
+		});
 		});
 	})
 	.catch(function (error) {
