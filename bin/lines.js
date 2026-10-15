@@ -569,6 +569,18 @@ fetchWestgateCard()
 			});
 
 			return Promise.all(linePromises).then(function () {
+				if (dryRun) {
+					if (pendingMongoUpdates === 0) {
+						console.log('No games in MongoDB for week ' + week + ' are missing a line.');
+					} else {
+						console.log(
+							pendingMongoUpdates +
+								' game(s) in MongoDB would get a line (run `runt lines update` to save).'
+						);
+					}
+					return false;
+				}
+
 				return Game.find({
 					season: season,
 					week: week,
@@ -589,18 +601,6 @@ fetchWestgateCard()
 						);
 					}
 
-					if (dryRun) {
-						if (pendingMongoUpdates === 0) {
-							console.log('No games in MongoDB for week ' + week + ' are missing a line.');
-						}
-						else {
-							console.log(
-								pendingMongoUpdates +
-									' game(s) in MongoDB would get a line (run `runt lines update` to save).'
-							);
-						}
-					}
-
 					return sendLinesAlert(problems, {
 						season: season,
 						sheetWeek: week,
@@ -609,7 +609,7 @@ fetchWestgateCard()
 						parsedCount: westgateData.data.length,
 						scheduledGameCount: scheduledGameCount,
 						linesApplied: pendingMongoUpdates,
-						updateMode: !dryRun
+						updateMode: true
 					}).then(function (hadProblems) {
 						return hadProblems;
 					});
