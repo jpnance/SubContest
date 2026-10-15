@@ -357,23 +357,25 @@ function gameHasLine(game) {
 	return game.line !== undefined && game.line !== null;
 }
 
-function buildConfidentWestgateGames(westgateData, problems, scheduledGameCount) {
-	if (scheduledGameCount === 0) {
-		problems.push(
-			'No games in Mongo for season ' +
-				westgateData.season +
-				' week ' +
-				westgateData.week +
-				' — load the NFL schedule before comparing lines'
-		);
-	} else if (westgateData.data.length !== scheduledGameCount) {
-		problems.push(
-			'PDF parser got ' +
-				westgateData.data.length +
-				' games, expected ' +
-				scheduledGameCount +
-				' per Mongo schedule — open Sheet URL below and compare; pdf-parse layout may have changed or schedule may be off'
-		);
+function buildConfidentWestgateGames(westgateData, problems, scheduledGameCount, checkIntegrity) {
+	if (checkIntegrity) {
+		if (scheduledGameCount === 0) {
+			problems.push(
+				'No games in Mongo for season ' +
+					westgateData.season +
+					' week ' +
+					westgateData.week +
+					' — load the NFL schedule before comparing lines'
+			);
+		} else if (westgateData.data.length !== scheduledGameCount) {
+			problems.push(
+				'PDF parser got ' +
+					westgateData.data.length +
+					' games, expected ' +
+					scheduledGameCount +
+					' per Mongo schedule — open Sheet URL below and compare; pdf-parse layout may have changed or schedule may be off'
+			);
+		}
 	}
 
 	var confidentGames = [];
@@ -381,19 +383,23 @@ function buildConfidentWestgateGames(westgateData, problems, scheduledGameCount)
 
 	westgateData.data.forEach(function (footballGame) {
 		if (!teamNameToAbbreviation[footballGame.favorite]) {
-			problems.push(
-				'PDF favorite "' +
-					footballGame.favorite +
-					'" has no abbrev — add to teamNameToAbbreviation in bin/lines.js'
-			);
+			if (checkIntegrity) {
+				problems.push(
+					'PDF favorite "' +
+						footballGame.favorite +
+						'" has no abbrev — add to teamNameToAbbreviation in bin/lines.js'
+				);
+			}
 			return;
 		}
 		if (!teamNameToAbbreviation[footballGame.underdog]) {
-			problems.push(
-				'PDF underdog "' +
-					footballGame.underdog +
-					'" has no abbrev — add to teamNameToAbbreviation in bin/lines.js'
-			);
+			if (checkIntegrity) {
+				problems.push(
+					'PDF underdog "' +
+						footballGame.underdog +
+						'" has no abbrev — add to teamNameToAbbreviation in bin/lines.js'
+				);
+			}
 			return;
 		}
 
@@ -401,7 +407,9 @@ function buildConfidentWestgateGames(westgateData, problems, scheduledGameCount)
 		var underdog = teamNameToAbbreviation[footballGame.underdog];
 		var matchupId = [favorite, underdog].sort().join('-');
 		if (seenMatchups[matchupId]) {
-			problems.push('Duplicate matchup on Westgate card: ' + footballGame.favorite + ' / ' + footballGame.underdog);
+			if (checkIntegrity) {
+				problems.push('Duplicate matchup on Westgate card: ' + footballGame.favorite + ' / ' + footballGame.underdog);
+			}
 			return;
 		}
 		seenMatchups[matchupId] = true;
@@ -486,8 +494,15 @@ fetchWestgateCard()
 		var week = westgateData.week;
 		var problems = [];
 
+		var checkIntegrity = !dryRun;
+
 		return Game.countDocuments({ season: season, week: week }).then(function (scheduledGameCount) {
-		var confidentGames = buildConfidentWestgateGames(westgateData, problems, scheduledGameCount);
+		var confidentGames = buildConfidentWestgateGames(
+			westgateData,
+			problems,
+			scheduledGameCount,
+			checkIntegrity
+		);
 		var lineLookup = {};
 
 		if (dryRun) {
@@ -525,15 +540,17 @@ fetchWestgateCard()
 
 			results.forEach(function (result) {
 				if (!result.game) {
-					problems.push(
-						'Westgate has ' +
-							result.footballGame.displayKey +
-							' but no season ' +
-							season +
-							' week ' +
-							week +
-							' Game in Mongo — fix schedule or abbreviations'
-					);
+					if (checkIntegrity) {
+						problems.push(
+							'Westgate has ' +
+								result.footballGame.displayKey +
+								' but no season ' +
+								season +
+								' week ' +
+								week +
+								' Game in Mongo — fix schedule or abbreviations'
+						);
+					}
 					return;
 				}
 
@@ -603,19 +620,20 @@ fetchWestgateCard()
 	})
 	.catch(function (error) {
 		console.log(error);
-		return notifications
-			.coinflipperAlert(
-				'SubContest lines — script failed before applying lines\n\n' +
-					'• ' +
-					error.message +
-					'\n\n' +
-					'Next: run `runt lines` on prod and check Westgate PDF / bin/lines.js parser',
-				{ priority: 'urgent' }
-			)
-			.finally(function () {
-				mongoose.disconnect();
-				process.exit(1);
-			});
+		var notify = dryRun
+			? Promise.resolve()
+			: notifications.coinflipperAlert(
+					'SubContest lines — script failed before applying lines\n\n' +
+						'• ' +
+						error.message +
+						'\n\n' +
+						'Next: run `runt lines` on prod and check Westgate PDF / bin/lines.js parser',
+					{ priority: 'urgent' }
+				);
+		return notify.finally(function () {
+			mongoose.disconnect();
+			process.exit(1);
+		});
 	})
 	.then(function (hadProblems) {
 		mongoose.disconnect();
