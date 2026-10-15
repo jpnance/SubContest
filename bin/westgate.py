@@ -7,7 +7,10 @@ import json
 
 INIT_DATE = {2026: datetime(2026,9,9,17)}
 SEASON = 2026
-URL_FMT = 'https://www.westgateresorts.com/supercontest/download/2026%20SUPERCONTEST%20GAME%20SHEET%20WEEK%20{}.pdf?contest=/2026/SuperContest/Card'
+URL_FMTS = [
+    'https://www.westgateresorts.com/supercontest/download/2026%20SUPERCONTEST%20GAME%20SHEET%20WEEK%20{}.pdf?contest=/2026/SuperContest/Card',
+    'https://www.westgateresorts.com/supercontest/download/2026%20SUPERCONTEST%20GAME%20SHEET%20WK%20{}.pdf?contest=/2026/SuperContest/Card',
+]
 
 CARD_URL = 'https://www.westgateresorts.com/hotels/nevada/las-vegas/westgate-las-vegas-resort-casino/casino/2026-supercontest-card/'
 CARD_URL_FMT = 'https://www.westgateresorts.com{}'
@@ -70,11 +73,16 @@ def parse_card(response, week, url = ''):
 def main():
     week = WEEK(datetime.now())
 
-    pdf_url = URL_FMT.format(week)
-    response = requests.get(pdf_url)
+    response = None
+    pdf_url = ''
+    for fmt in URL_FMTS:
+        pdf_url = fmt.format(week)
+        response = requests.get(pdf_url)
+        if response.status_code == 200:
+            break
 
     if response.status_code == 200:
-        parse_card(response, week)
+        parse_card(response, week, pdf_url)
     else:
         url = get_card_url(week)
         response = requests.get(url)

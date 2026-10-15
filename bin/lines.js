@@ -12,12 +12,14 @@ mongoose.connect(process.env.MONGODB_URI);
 
 var WESTGATE_SEASON = 2026;
 var WESTGATE_INIT_DATE = { 2026: new Date(2026, 8, 9, 17, 0, 0) };
-var WESTGATE_URL_FMT =
+var WESTGATE_URL_FMT_WEEK =
 	'https://www.westgateresorts.com/supercontest/download/2026%20SUPERCONTEST%20GAME%20SHEET%20WEEK%20{}.pdf?contest=/2026/SuperContest/Card';
+var WESTGATE_URL_FMT_WK =
+	'https://www.westgateresorts.com/supercontest/download/2026%20SUPERCONTEST%20GAME%20SHEET%20WK%20{}.pdf?contest=/2026/SuperContest/Card';
 var WESTGATE_CARD_URL =
 	'https://www.westgateresorts.com/hotels/nevada/las-vegas/westgate-las-vegas-resort-casino/casino/2026-supercontest-card/';
 var WESTGATE_CARD_URL_FMT = 'https://www.westgateresorts.com{}';
-var WESTGATE_GAME_SHEET_HREF_RE = /GAME\s+SHEET\s+WEEK\s+(\d+)\.pdf/i;
+var WESTGATE_GAME_SHEET_HREF_RE = /GAME\s+SHEET\s+(?:WEEK|WK)\s+(\d+)\.pdf/i;
 
 var westgateTeamNames = new Set([
 	'49ERS',
@@ -177,8 +179,8 @@ function westgateParseCardPdf(buffer) {
 	});
 }
 
-function westgatePdfUrlForWeek(week) {
-	return WESTGATE_URL_FMT.replace('{}', week);
+function westgatePdfUrlCandidates(week) {
+	return [WESTGATE_URL_FMT_WEEK.replace('{}', week), WESTGATE_URL_FMT_WK.replace('{}', week)];
 }
 
 function westgateAbsoluteUrl(href) {
@@ -229,8 +231,7 @@ function westgateDownloadPdf(url) {
 	});
 }
 
-function westgateFetchPdf(targetWeek) {
-	var pdfUrl = westgatePdfUrlForWeek(targetWeek);
+function westgateTryPdfUrl(pdfUrl) {
 	return request
 		.get(pdfUrl)
 		.buffer(true)
@@ -239,26 +240,69 @@ function westgateFetchPdf(targetWeek) {
 		})
 		.then(function (res) {
 			if (res.status === 200) {
-				return { published: true, buffer: res.body, url: pdfUrl, week: targetWeek };
+				return { published: true, buffer: res.body, url: pdfUrl };
 			}
-			return request.get(WESTGATE_CARD_URL).then(function (cardRes) {
-				var links = westgateListGameSheetLinks(cardRes.text);
-				var picked = links.find(function (link) {
-					return link.week === targetWeek;
-				});
-				if (!picked) {
-					return { published: false, week: targetWeek };
-				}
-				var canonicalUrl = westgatePdfUrlForWeek(targetWeek);
-				return westgateDownloadPdf(canonicalUrl)
-					.catch(function () {
-						return westgateDownloadPdf(picked.href);
-					})
-					.then(function (buffer) {
-						return { published: true, buffer: buffer, url: canonicalUrl, week: targetWeek };
-					});
-			});
+			return null;
 		});
+}
+
+function westgateFetchPdfFromCardPage(targetWeek) {
+	return request.get(WESTGATE_CARD_URL).then(function (cardRes) {
+		var links = westgateListGameSheetLinks(cardRes.text);
+		var picked = links.find(function (link) {
+			return link.week === targetWeek;
+		});
+		if (!picked) {
+			return { published: false, week: targetWeek };
+		}
+		var candidateUrls = westgatePdfUrlCandidates(targetWeek).concat([picked.href]);
+		var seen = {};
+		var tryUrls = candidateUrls.filter(function (url) {
+			if (seen[url]) {
+				return false;
+			}
+			seen[url] = true;
+			return true;
+		});
+
+		function tryNext(index) {
+			if (index >= tryUrls.length) {
+				return { published: false, week: targetWeek };
+			}
+			return westgateDownloadPdf(tryUrls[index])
+				.then(function (buffer) {
+					return { published: true, buffer: buffer, url: tryUrls[index], week: targetWeek };
+				})
+				.catch(function () {
+					return tryNext(index + 1);
+				});
+		}
+
+		return tryNext(0);
+	});
+}
+
+function westgateFetchPdf(targetWeek) {
+	var candidates = westgatePdfUrlCandidates(targetWeek);
+
+	function tryCandidates(index) {
+		if (index >= candidates.length) {
+			return westgateFetchPdfFromCardPage(targetWeek);
+		}
+		return westgateTryPdfUrl(candidates[index]).then(function (result) {
+			if (result) {
+				return {
+					published: true,
+					buffer: result.buffer,
+					url: result.url,
+					week: targetWeek
+				};
+			}
+			return tryCandidates(index + 1);
+		});
+	}
+
+	return tryCandidates(0);
 }
 
 function fetchWestgateCard(date) {
