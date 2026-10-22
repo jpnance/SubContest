@@ -130,8 +130,9 @@ function westgateParseTeamChunk(chunk) {
 		if (starred) {
 			rest = rest.slice(0, -1);
 		}
+		rest = westgateProcessTeamName(rest);
 		if (westgateTeamNames.has(rest)) {
-			return { num: n, team: westgateProcessTeamName(rest) };
+			return { num: n, team: rest };
 		}
 	}
 	return null;
