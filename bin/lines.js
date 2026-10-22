@@ -431,6 +431,14 @@ function gameDisplayKey(game) {
 	return game.awayTeam.abbreviation + '@' + game.homeTeam.abbreviation;
 }
 
+// Coinflipper only when Mongo still needs a human fix. Parser/schedule drift with all lines set is log-only.
+function alertableProblems(problems, scheduledGameCount, stillMissingCount) {
+	if (stillMissingCount > 0 || scheduledGameCount === 0) {
+		return problems;
+	}
+	return [];
+}
+
 function sendLinesAlert(problems, context) {
 	if (problems.length === 0) {
 		return Promise.resolve(false);
@@ -602,7 +610,23 @@ fetchWestgateCard()
 						);
 					}
 
-					return sendLinesAlert(problems, {
+					var toAlert = alertableProblems(problems, scheduledGameCount, stillMissing.length);
+					if (toAlert.length === 0 && problems.length > 0) {
+						problems.forEach(function (problem) {
+							console.error('[lines] ' + problem);
+						});
+						console.log(
+							'[lines] Week ' +
+								week +
+								' has lines on all ' +
+								scheduledGameCount +
+								' scheduled game(s); skipping coinflipper for ' +
+								problems.length +
+								' parser/integrity note(s).'
+						);
+					}
+
+					return sendLinesAlert(toAlert, {
 						season: season,
 						sheetWeek: week,
 						url: westgateData.url,
