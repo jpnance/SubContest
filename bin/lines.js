@@ -16,10 +16,13 @@ var WESTGATE_URL_FMT_WEEK =
 	'https://www.westgateresorts.com/supercontest/download/2026%20SUPERCONTEST%20GAME%20SHEET%20WEEK%20{}.pdf?contest=/2026/SuperContest/Card';
 var WESTGATE_URL_FMT_WK =
 	'https://www.westgateresorts.com/supercontest/download/2026%20SUPERCONTEST%20GAME%20SHEET%20WK%20{}.pdf?contest=/2026/SuperContest/Card';
+var WESTGATE_URL_FMT_PLAIN =
+	'https://www.westgateresorts.com/supercontest/download/2026%20SUPERCONTEST%20GAME%20SHEET%20{}.pdf?contest=/2026/SuperContest/Card';
 var WESTGATE_CARD_URL =
 	'https://www.westgateresorts.com/hotels/nevada/las-vegas/westgate-las-vegas-resort-casino/casino/2026-supercontest-card/';
 var WESTGATE_CARD_URL_FMT = 'https://www.westgateresorts.com{}';
-var WESTGATE_GAME_SHEET_HREF_RE = /GAME\s+SHEET\s+(?:WEEK|WK)\s+(\d+)\.pdf/i;
+// WEEK 4, WK 10, or plain 11 — Westgate is inconsistent
+var WESTGATE_GAME_SHEET_HREF_RE = /GAME\s+SHEET\s+(?:(?:WEEK|WK)\s+)?(\d+)\.pdf/i;
 
 var westgateTeamNames = new Set([
 	'49ERS',
@@ -181,7 +184,11 @@ function westgateParseCardPdf(buffer) {
 }
 
 function westgatePdfUrlCandidates(week) {
-	return [WESTGATE_URL_FMT_WEEK.replace('{}', week), WESTGATE_URL_FMT_WK.replace('{}', week)];
+	return [
+		WESTGATE_URL_FMT_WEEK.replace('{}', week),
+		WESTGATE_URL_FMT_WK.replace('{}', week),
+		WESTGATE_URL_FMT_PLAIN.replace('{}', week)
+	];
 }
 
 function westgateAbsoluteUrl(href) {
@@ -490,13 +497,61 @@ function sendLinesAlert(problems, context) {
 	});
 }
 
+function sendPdfNotFoundAlert(targetWeek, season, missingLineCount) {
+	var message = [
+		'SubContest lines — Westgate week ' + targetWeek + ' PDF not found',
+		'Season ' + season + ' · calendar week ' + targetWeek,
+		missingLineCount +
+			' game(s) in Mongo still have no line; tried WEEK / WK / plain "GAME SHEET ' +
+			targetWeek +
+			'.pdf" URLs and the card page.',
+		'Card page: ' + WESTGATE_CARD_URL,
+		'',
+		'Next: confirm the sheet is up on Westgate, then run `runt lines update` (or fix bin/lines.js if the filename pattern changed again).'
+	].join('\n');
+
+	return notifications.coinflipperAlert(message, { priority: 'high' }).then(function () {
+		return true;
+	});
+}
+
 fetchWestgateCard()
 	.then(function (westgateData) {
 		if (westgateData.notPublished) {
+			var targetWeek = westgateData.targetWeek;
+			var season = westgateData.season;
 			console.log(
-				'Westgate week ' + westgateData.targetWeek + ' PDF is not published yet; skipping (no alert).'
+				'Westgate week ' + targetWeek + ' PDF not found (direct URLs + card page); skipping line apply.'
 			);
-			return false;
+
+			return Game.countDocuments({
+				season: season,
+				week: targetWeek,
+				line: { '$exists': false }
+			}).then(function (missingLineCount) {
+				if (dryRun) {
+					if (missingLineCount > 0) {
+						console.log(
+							missingLineCount +
+								' game(s) for week ' +
+								targetWeek +
+								' still need lines; update mode would coinflipper.'
+						);
+					}
+					return false;
+				}
+
+				if (missingLineCount === 0) {
+					console.log(
+						'[lines] No Mongo games missing lines for week ' +
+							targetWeek +
+							'; not alerting on missing PDF.'
+					);
+					return false;
+				}
+
+				return sendPdfNotFoundAlert(targetWeek, season, missingLineCount);
+			});
 		}
 
 		var season = westgateData.season;
